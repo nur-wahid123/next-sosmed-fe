@@ -1,7 +1,7 @@
 module.exports = {
     apps : [{
         name:'pos-fe',
-      script: 'dist/src/main.js',
+      script: 'node_modules/next/dist/bin/next',
       watch: '.'
     }],
   
