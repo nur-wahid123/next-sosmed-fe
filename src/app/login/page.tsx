@@ -26,7 +26,11 @@ const Page = () => {
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Card>
         <CardHeader>
+<<<<<<< HEAD
           <CardTitle>Login Bro Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem voluptas tempora exercitationem expedita!</CardTitle>
+=======
+          <CardTitle>Login Form</CardTitle>
+>>>>>>> ddbb1a91c6eeabc2230fd475fb9e187eca233ec6
           <CardDescription>Welcome Back, please login first</CardDescription>
         </CardHeader>
         <CardContent>
