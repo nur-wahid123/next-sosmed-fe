@@ -9,21 +9,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh '''
-                cd ${APP_DIR}
-                git pull origin main
-                npm install
-                npm run build
-                '''
+                sh cd ${APP_DIR}
+                sh git pull origin main
+                sh npm install
+                sh npm run build
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                cd ${APP_DIR}
-                pm2 reload ${PM2_APP_NAME}
-                '''
+                sh cd ${APP_DIR}
+                sh pm2 reload ${PM2_APP_NAME}
             }
         }
     }
