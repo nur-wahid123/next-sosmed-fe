@@ -11,7 +11,7 @@ pipeline {
             steps {
                 // Execute multiple shell commands using a multi-line string
                 sh '''
-                cd ~
+                cd ..
                 cd ${APP_DIR}
                 git pull origin main
                 npm install
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 // Reload PM2 app
                 sh '''
-                cd ~
+                cd ..
                 cd ${APP_DIR}
                 pm2 reload ${PM2_APP_NAME}
                 '''
