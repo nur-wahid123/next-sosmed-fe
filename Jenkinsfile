@@ -3,16 +3,14 @@ pipeline {
 
     environment {
         PM2_APP_NAME = 'pos-fe'
-        APP_DIR = "pos-app/pos-fe"  // Use $HOME for path expansion
+        APP_DIR = "pos-app/pos-fe"
     }
 
     stages {
         stage('Build') {
             steps {
-                // Execute multiple shell commands using a multi-line string
                 sh '''
-                cd ..
-                cd ${APP_DIR}
+                cd ~/${APP_DIR}
                 git pull origin main
                 npm install
                 npm run build
@@ -22,10 +20,8 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // Reload PM2 app
                 sh '''
-                cd ..
-                cd ${APP_DIR}
+                cd ~/${APP_DIR}
                 pm2 reload ${PM2_APP_NAME}
                 '''
             }
