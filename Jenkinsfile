@@ -27,6 +27,13 @@ pipeline {
                 sh 'npm run build'
             }
         }
+
+        stage('Start Prod') {
+            steps {
+                
+                sh 'npm run start -- -p 3232'
+            }
+        }
     }
 
     post {
