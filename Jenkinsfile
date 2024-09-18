@@ -4,6 +4,7 @@ pipeline {
     environment {
         PM2_APP_NAME = 'pos-fe'
         APP_DIR = "/home/farhan/pos-app/pos-fe"
+        PATH="/home/farhan/.nvm/versions/node/v20.17.0/bin/npm"
     }
     stages {
         stage('Checkout') {
