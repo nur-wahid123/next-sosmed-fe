@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    tools {nodejs "nodejs"}
     
     environment {
         PM2_APP_NAME = 'pos-fe'
