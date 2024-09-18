@@ -30,10 +30,6 @@ pipeline {
     }
 
     post {
-        always {
-            // Optionally clean up the workspace after the build
-            cleanWs()
-        }
         success {
             // Notify or deploy after successful build
             echo 'Build successful!'
