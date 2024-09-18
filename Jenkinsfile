@@ -31,7 +31,7 @@ pipeline {
         stage('Start Prod') {
             steps {
                 
-                sh 'npm run start -- -p 3232'
+                sh 'npm run start'
             }
         }
     }
