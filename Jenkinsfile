@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PM2_APP_NAME = 'pos-fe'
-        APP_DIR = "${WORKSPACE}/pos-app/pos-fe"
+        APP_DIR = "/home/farhan/pos-app/pos-fe"
     }
 
     stages {
@@ -11,9 +11,6 @@ pipeline {
             steps {
                 sh '''
                 cd ${APP_DIR}
-                git pull origin main
-                npm install
-                npm run build
                 '''
             }
         }
@@ -22,7 +19,6 @@ pipeline {
             steps {
                 sh '''
                 cd ${APP_DIR}
-                pm2 reload ${PM2_APP_NAME}
                 '''
             }
         }
