@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, FormEventHandler, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { LoginForm } from "@/lib/Types";
 import {
   Card,
@@ -14,23 +14,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 
 const Page = () => {
-  const [loginForm, setLoginForm] = useState(new LoginForm());
+  const [loginForm, setLoginForm] = useState<LoginForm>({ username: '', password: '' });
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginForm({ ...loginForm, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(loginForm);
   };
+
   return (
     <div className="grid w-full max-w-sm items-center gap-1.5">
       <Card>
         <CardHeader>
-<<<<<<< HEAD
-          <CardTitle>Login Bro Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem voluptas tempora exercitationem expedita!</CardTitle>
-=======
           <CardTitle>Login Form</CardTitle>
->>>>>>> ddbb1a91c6eeabc2230fd475fb9e187eca233ec6
           <CardDescription>Welcome Back, please login first</CardDescription>
         </CardHeader>
         <CardContent>
@@ -41,6 +40,7 @@ const Page = () => {
               type="text"
               id="username"
               name="username"
+              value={loginForm.username}
               required
             />
             <Label htmlFor="password">Password</Label>
@@ -49,6 +49,7 @@ const Page = () => {
               type="password"
               id="password"
               name="password"
+              value={loginForm.password}
               required
             />
             <Input type="submit" />
@@ -58,4 +59,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;
