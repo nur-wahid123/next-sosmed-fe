@@ -31,7 +31,7 @@ pipeline {
         stage('Start Prod') {
             steps {
                 //sh 'npm run start'
-                sh 'pm2 reload pos-fe'
+                sh 'pm2 restart pos-fe'
             }
         }
     }
