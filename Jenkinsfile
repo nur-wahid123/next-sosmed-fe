@@ -1,35 +1,45 @@
 pipeline {
     agent any
-
+    
     environment {
         PM2_APP_NAME = 'pos-fe'
         APP_DIR = "/home/farhan/pos-app/pos-fe"
     }
-
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                sh '''
-                cd ${APP_DIR}
-                '''
+                // Pull the code from the Git repository
+                git branch: 'main', url: 'https://github.com/nur-wahid123/next-sosmed-fe.git'
             }
         }
 
-        stage('Deploy') {
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                cd ${APP_DIR}
-                '''
+                // Install the project dependencies
+                sh 'npm install'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Run the build script (assumes `npm run build` is in your package.json)
+                sh 'npm run build'
             }
         }
     }
 
     post {
+        always {
+            // Optionally clean up the workspace after the build
+            cleanWs()
+        }
         success {
-            echo 'Deployment Successful!'
+            // Notify or deploy after successful build
+            echo 'Build successful!'
         }
         failure {
-            echo 'Deployment Failed!'
+            // Handle build failure (e.g., notify via email, Slack, etc.)
+            echo 'Build failed!'
         }
     }
 }
