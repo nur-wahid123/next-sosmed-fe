@@ -8,8 +8,8 @@ export default function Home() {
       <Navbar />
       <main className="mt-32">
         <Hero />
-        <div className="rounded-t-3xl bg-violet-100">
-          <div className="w-10/12 pt-20 mx-auto">
+        <div className="mx-auto rounded-t-3xl xl:w-8/12 bg-violet-100">
+          <div className="w-10/12 xl:w-8/12 pt-20 mx-auto">
             <div className="flex items-center justify-between font-medium">
               <div className="w-1/3">
                 <p className="text-2xl">Sometimes Do Something Yourself is Difficult</p>
