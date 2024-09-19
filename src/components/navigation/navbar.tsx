@@ -1,9 +1,6 @@
 import React from 'react'
-import { Menubar, MenubarMenu } from '../ui/menubar'
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '../ui/navigation-menu'
 import Link from 'next/link'
-import { Button } from '../ui/button'
-import { title } from 'process'
+import { Button, buttonVariants } from '../ui/button'
 
 const menus = [
     {
@@ -34,9 +31,13 @@ export default function Navbar() {
 
                 }
             </ul>
-            <Button variant='secondary'>
+            <Link 
+                href="/login"
+                className={buttonVariants({ variant: "secondary" })}
+            >
                 Login
-            </Button>
+            </Link>
+
         </div>
         </nav>
     )
