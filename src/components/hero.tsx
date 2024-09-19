@@ -3,9 +3,9 @@ import React from 'react'
 
 export default function Hero() {
   return (
-    <div className='w-10/12 xl:w-7/12 py-28 mx-auto'>
-        <div className='grid grid-cols-3 gap-4 sm:text-5xl text-6xl font-medium'>
-            <div className='col-span-2 text-right'>
+    <div className='w-10/12 xl:w-8/12 py-28 mx-auto'>
+        <div className='grid grid-cols-2 gap-4 sm:text-5xl text-6xl font-medium'>
+            <div className='text-right'>
                 <span className='relative'>
                 <Image 
                     src="/pos2.svg" 
@@ -26,11 +26,10 @@ export default function Hero() {
                     className='rounded-xl'
                 />
             </div>
-            <div className='col-span-2'>
+            <div className='text-right'>
                 <p>that Make <span className='text-slate-500'>Your Life</span></p>
             </div>
-            <div></div>
-            <div className='col-span-2'>100% Much Easier</div>
+            <div className='col-span-2 text-center'>100% Much Easier</div>
         </div>
     </div>
   )
