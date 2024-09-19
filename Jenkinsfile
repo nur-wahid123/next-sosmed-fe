@@ -24,6 +24,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Run the build script (assumes `npm run build` is in your package.json)
+                sh 'rm -rf .next'
                 sh 'npm run build'
             }
         }
