@@ -1,9 +1,7 @@
 import React from 'react'
-import { Menubar, MenubarMenu } from '../ui/menubar'
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from '../ui/navigation-menu'
 import Link from 'next/link'
-import { Button } from '../ui/button'
-import { title } from 'process'
+import { Button, buttonVariants } from '../ui/button'
+import { ScanBarcode } from 'lucide-react'
 
 const menus = [
     {
@@ -24,7 +22,10 @@ export default function Navbar() {
     return (
         <nav className='flex relative justify-center'>
         <div className='flex absolute mx-auto w-3/4 p-2 mt-3 items-center justify-between bg-slate-900 rounded-xl'>
-            <h1 className='text-white'>LOGO</h1>
+            <div className='flex items-center gap-1 text-white'>
+            <ScanBarcode/>
+            <h1 className='text-xl font-bold'>POS</h1>
+            </div>
             <ul className='flex py-2 px-5 rounded-lg gap-10 text-white bg-slate-700'>
                 {menus.map((menu) => (
                     <li key={menu.title}>
@@ -34,9 +35,13 @@ export default function Navbar() {
 
                 }
             </ul>
-            <Button variant='secondary'>
+            <Link 
+                href="/login"
+                className={buttonVariants({ variant: "secondary" })}
+            >
                 Login
-            </Button>
+            </Link>
+
         </div>
         </nav>
     )
