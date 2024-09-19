@@ -21,7 +21,7 @@ const menus = [
 export default function Navbar() {
     return (
         <nav className='flex relative justify-center'>
-        <div className='flex absolute mx-auto w-3/4 p-2 mt-3 items-center justify-between bg-slate-900 rounded-xl'>
+        <div className='flex absolute mx-auto w-10/12 xl:w-8/12 p-2 mt-3 items-center justify-between bg-slate-900 rounded-xl'>
             <div className='flex items-center gap-1 text-white'>
             <ScanBarcode/>
             <h1 className='text-xl font-bold'>POS</h1>

@@ -3,8 +3,8 @@ import React from 'react'
 
 export default function Hero() {
   return (
-    <div className='w-10/12 py-28 mx-auto'>
-        <div className='grid grid-cols-3 gap-4 text-6xl font-medium'>
+    <div className='w-10/12 xl:w-7/12 py-28 mx-auto'>
+        <div className='grid grid-cols-3 gap-4 sm:text-5xl text-6xl font-medium'>
             <div className='col-span-2 text-right'>
                 <span className='relative'>
                 <Image 
