@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Social Media",
-  description: "Your Social Media Platform",
+  title: "Point Of Sales",
+  description: "POS PROJECT",
 };
 
 export default function RootLayout({
