@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button, buttonVariants } from '../ui/button'
+import { ScanBarcode } from 'lucide-react'
 
 const menus = [
     {
@@ -21,7 +22,10 @@ export default function Navbar() {
     return (
         <nav className='flex relative justify-center'>
         <div className='flex absolute mx-auto w-3/4 p-2 mt-3 items-center justify-between bg-slate-900 rounded-xl'>
-            <h1 className='text-white'>LOGO</h1>
+            <div className='flex items-center gap-1 text-white'>
+            <ScanBarcode/>
+            <h1 className='text-xl font-bold'>POS</h1>
+            </div>
             <ul className='flex py-2 px-5 rounded-lg gap-10 text-white bg-slate-700'>
                 {menus.map((menu) => (
                     <li key={menu.title}>
