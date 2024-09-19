@@ -31,7 +31,7 @@ pipeline {
         stage('Start Prod') {
             steps {
                 //sh 'npm run start'
-                sh 'pm2 restart pos-fe'
+                sh 'sudo -u farhan /home/farhan/.nvm/versions/node/v22.9.0/bin/pm2 restart ${PM2_APP_NAME}'
             }
         }
     }
