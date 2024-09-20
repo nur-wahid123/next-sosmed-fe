@@ -7,7 +7,7 @@ pipeline {
                     sh '''
                         eval "$(ssh-agent -s)"
                         echo "akudiaya" | ssh-add /tmp/id_rsa
-                        ssh fajarnurwahid99@35.219.71.84 "cd ~/pos-app/next-sosmed-fe; git pull origin main; docker compose down; docker build -t next-app .;docker compose up -d; docker image prune -a -f"
+                        ssh fajarnurwahid99@35.219.71.84 "cd ~/pos-app/next-sosmed-fe; git pull origin main; docker build -t next-app .; docker compose down;docker compose up -d; docker image prune -a -f"
                     '''
             }
         }
