@@ -12,7 +12,7 @@ export default function Home() {
           <div className="w-10/12 xl:w-8/12 pt-20 mx-auto">
             <div className="flex items-center justify-between font-medium">
               <div className="w-1/3">
-                <p className="text-2xl">Sometimes Do Something Yourself is Difficult</p>
+                <p className="text-xl">Sometimes Do Something Yourself is Difficult</p>
               </div>
               <div className="text-right">
                 <p>Our Pos is the best in the town</p>
