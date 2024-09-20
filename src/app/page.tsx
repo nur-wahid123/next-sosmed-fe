@@ -15,7 +15,7 @@ export default function Home() {
                 <p className="text-xl">Sometimes Do Something Yourself is Difficult</p>
               </div>
               <div className="text-right">
-                <p>Our Pos is the best in the world</p>
+                <p>Our Point Of Sale is the best in the world</p>
                 <p>I Think......</p>
               </div>
             </div>
