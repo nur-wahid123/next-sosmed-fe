@@ -1,7 +1,9 @@
+"use client"
 import Sidebar from '@/components/navigation/sidebar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { File, Inbox, Send } from 'lucide-react'
+import UserButton from '@/components/user-btn'
+import { Database, File, Inbox, Send } from 'lucide-react'
 import React from 'react'
 
 const sidebarMenu = [
@@ -11,13 +13,35 @@ const sidebarMenu = [
         icon: Inbox,
     },
     {
-        title: "File",
-        href: "/dashboard",
+        title: "Report",
+        href: "/dashboard/file",
         icon: File,
     },
     {
         title: "Sent",
-        href: "/dashboard",
+        href: "/dashboard/sent",
+        icon: Send,
+    },
+    {
+        title: "Master",
+        href: "/dashboard/master",
+        icon: Database,
+        submenu : [
+            {
+                title: "Barang",
+                href: "/dashboard/master/barang",
+                icon: Database
+            },
+            {
+                title: "User",
+                href: "/dashboard/master/user",
+                icon: Database
+            },
+        ]
+    },
+    {
+        title: "Info",
+        href: "/dashboard/sent",
         icon: Send,
     },
 ]
@@ -27,9 +51,7 @@ export default function DashboardLayout({ children } : { children: React.ReactNo
     <div className='h-screen overflow-hidden'>
         <div className='flex w-full h-14'>
             <div className='p-2 w-1/5'>
-            <Button variant="outline" className='w-full'>
-                hello, Admin
-            </Button>
+            <UserButton />
             </div>
             <Separator orientation='vertical'/>
         </div>
