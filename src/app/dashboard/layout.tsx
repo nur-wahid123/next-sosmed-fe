@@ -3,7 +3,7 @@ import Sidebar from '@/components/navigation/sidebar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import UserButton from '@/components/user-btn'
-import { Database, File, Inbox, Send } from 'lucide-react'
+import { Database, File, Inbox, ScanBarcode, Send } from 'lucide-react'
 import React from 'react'
 
 const sidebarMenu = [
@@ -13,14 +13,14 @@ const sidebarMenu = [
         icon: Inbox,
     },
     {
+        title: "POS",
+        href: "/dashboard/pos",
+        icon: ScanBarcode,
+    },
+    {
         title: "Report",
         href: "/dashboard/file",
         icon: File,
-    },
-    {
-        title: "Sent",
-        href: "/dashboard/sent",
-        icon: Send,
     },
     {
         title: "Master",
