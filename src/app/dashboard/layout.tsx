@@ -3,7 +3,7 @@ import Sidebar from '@/components/navigation/sidebar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import UserButton from '@/components/user-btn'
-import { Database, File, Inbox, Send } from 'lucide-react'
+import { Database, File, Inbox, ScanBarcode, Send } from 'lucide-react'
 import React from 'react'
 
 const sidebarMenu = [
@@ -13,14 +13,14 @@ const sidebarMenu = [
         icon: Inbox,
     },
     {
-        title: "Report",
-        href: "/dashboard/file",
-        icon: File,
+        title: "POS",
+        href: "/dashboard/pos",
+        icon: ScanBarcode,
     },
     {
-        title: "Sent",
-        href: "/dashboard/sent",
-        icon: Send,
+        title: "Report",
+        href: "/dashboard/report",
+        icon: File,
     },
     {
         title: "Master",
@@ -41,7 +41,7 @@ const sidebarMenu = [
     },
     {
         title: "Info",
-        href: "/dashboard/sent",
+        href: "/dashboard/info",
         icon: Send,
     },
 ]
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children } : { children: React.ReactNo
 
             <Separator orientation="vertical" />
 
-            <div className='overflow-y-visible'>
+            <div className='flex-1 overflow-y-visible'>
                 {children}
             </div>
         </div>

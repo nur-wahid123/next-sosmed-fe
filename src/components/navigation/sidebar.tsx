@@ -49,7 +49,7 @@ export default function Sidebar({ links }: NavProps) {
                                         buttonVariants({variant: "ghost", size:"sm"}),
                                         pathname === link.href ? "bg-muted " : "hover:bg-muted",
                                         "justify-start",
-                                        "ml-4",
+                                        "pl-7",
                                         "w-full"
                                     )}
                                 >
@@ -66,7 +66,7 @@ export default function Sidebar({ links }: NavProps) {
                     href={link.href}
                     className={cn(
                         buttonVariants({variant: "ghost", size:"sm"}),
-                        pathname === link.href ? "bg-muted " : "hover:bg-muted",
+                        pathname === link.href ? "bg-muted " : "hover:bg-muted hover:underline",
                         "justify-start"
                     )}
                 >
