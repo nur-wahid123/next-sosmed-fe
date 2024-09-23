@@ -13,7 +13,7 @@ export default function Home() {
             <div className="flex items-center justify-between font-medium">
               <div className="w-1/3">
                 <p className="text-xl">
-                  Sometimes Does Something Yourself is Difficult
+                  Sometimes Do Something Difficult by Yourself
                 </p>
               </div>
               <div className="text-right">
