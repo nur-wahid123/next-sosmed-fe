@@ -19,7 +19,7 @@ const sidebarMenu = [
     },
     {
         title: "Report",
-        href: "/dashboard/file",
+        href: "/dashboard/report",
         icon: File,
     },
     {
@@ -41,7 +41,7 @@ const sidebarMenu = [
     },
     {
         title: "Info",
-        href: "/dashboard/sent",
+        href: "/dashboard/info",
         icon: Send,
     },
 ]
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children } : { children: React.ReactNo
 
             <Separator orientation="vertical" />
 
-            <div className='overflow-y-visible'>
+            <div className='flex-1 overflow-y-visible'>
                 {children}
             </div>
         </div>
