@@ -48,7 +48,7 @@ const sidebarMenu = [
 
 export default function DashboardLayout({ children } : { children: React.ReactNode }) {
   return (
-    <div className='h-screen overflow-hidden'>
+    <div className='h-full'>
         <div className='flex w-full h-14'>
             <div className='p-2 w-1/5'>
             <UserButton />
