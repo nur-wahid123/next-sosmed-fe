@@ -36,7 +36,7 @@ export default function POSPage() {
             </ul>
            </div>
 
-           <div className='p-2 pt-4 flex-1 rounded-md bg-slate-200'>
+           <div className='p-2 pt-4 flex flex-1 flex-col justify-between rounded-md bg-slate-200'>
                 <div className='flex flex-col gap-4'>
                     <div className='flex justify-between'>
                         <p>SubTotal</p>
@@ -51,6 +51,9 @@ export default function POSPage() {
                         <p>Total</p>
                         <p>Rp.45000</p>
                     </div>
+                </div>
+                <div>
+                    <p>Payment</p>
                 </div>
            </div>
         </div>

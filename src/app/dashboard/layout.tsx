@@ -48,7 +48,7 @@ const sidebarMenu = [
 
 export default function DashboardLayout({ children } : { children: React.ReactNode }) {
   return (
-    <div className='h-full'>
+    <div className='h-screen flex flex-col'>
         <div className='flex w-full h-14'>
             <div className='p-2 w-1/5'>
             <UserButton />
@@ -56,14 +56,14 @@ export default function DashboardLayout({ children } : { children: React.ReactNo
             <Separator orientation='vertical'/>
         </div>
         <Separator />
-        <div className='flex w-full h-full'>
+        <div className='flex-1 flex w-full h-full'>
             <div className='w-1/5 pt-2'>
              <Sidebar links={sidebarMenu}/>
             </div>
 
             <Separator orientation="vertical" />
 
-            <div className='flex-1 overflow-y-visible'>
+            <div className='flex-1 overflow-y-auto'>
                 {children}
             </div>
         </div>
