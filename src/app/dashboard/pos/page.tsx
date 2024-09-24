@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import React from 'react'
 
 export default function POSPage() {
@@ -53,7 +54,19 @@ export default function POSPage() {
                     </div>
                 </div>
                 <div>
-                    <p>Payment</p>
+                    <p className='my-2 text-sm'>Payment Method</p>
+                    <ToggleGroup type="single" defaultValue="cash" variant="outline">
+                        <ToggleGroupItem value="cash" aria-label="Cash" className='flex-1'>
+                            <p>CASH</p>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="bon" aria-label="Bon" className='flex-1'>
+                            <p>BON</p>
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="qris" aria-label="QRIS" className='flex-1'>
+                            <p>QRIS</p>
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                    <button className='mt-4 w-full bg-slate-500 text-white rounded-full p-2 hover:bg-black'>Pay</button>
                 </div>
            </div>
         </div>
