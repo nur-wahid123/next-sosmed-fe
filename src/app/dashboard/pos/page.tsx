@@ -1,3 +1,5 @@
+import CategoryBox from '@/components/pos/category-box'
+import SearchBar from '@/components/search-bar'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -6,8 +8,10 @@ import React from 'react'
 export default function POSPage() {
   return (
     <div className='flex gap-2 p-2 w-full h-full'>
-        <div className='flex-1 bg-slate-400'>
-            <p>items</p>
+        <div className='flex-1 w-full'>
+            <SearchBar/>
+            <CategoryBox/>
+            <Separator />
         </div>
         <div className='w-1/3 flex flex-col gap-2'>
            <div>
