@@ -48,6 +48,48 @@ const items = [
         quantity: 0,
         category: "others"
     },
+    {
+        id: 7,
+        name: "Item 7",
+        price: 70000,
+        quantity: 0,
+        category: "others"
+    },
+    {
+        id: 8,
+        name: "Item 8",
+        price: 80000,
+        quantity: 0,
+        category: "others"
+    },
+    {
+        id: 9,
+        name: "Item 9",
+        price: 90000,
+        quantity: 0,
+        category: "others"
+    },
+    {
+        id: 10,
+        name: "Item 10",
+        price: 100000,
+        quantity: 0,
+        category: "others"
+    },
+    {
+        id: 11,
+        name: "Item 11",
+        price: 110000,
+        quantity: 0,
+        category: "others"
+    },
+    {
+        id: 12,
+        name: "Item 12",
+        price: 120000,
+        quantity: 0,
+        category: "others"
+    },
 ]
 
 export default function ItemsBox() {

@@ -7,7 +7,7 @@ export default function Cart() {
     const selectedItems = useAtomValue(selectedItemsAtom);
   return (
     <div className='flex flex-col gap-2 h-full'>
-           <div className='max-h-60 overflow-y-auto'>
+           <div className='max-h-[55vh] overflow-y-auto'>
             <ul className='flex flex-col gap-2'>
                 {selectedItems.map((item, index) => (
                     <li key={item.name} className='flex p-2 justify-between items-center bg-slate-200 rounded-md'>
