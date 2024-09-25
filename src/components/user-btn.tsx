@@ -8,7 +8,7 @@ export default function UserButton() {
     
   return (
     <Popover>
-        <PopoverTrigger className="w-full">
+        <PopoverTrigger asChild className="w-full">
             <Button
                 variant="outline"
                 role="combobox"
