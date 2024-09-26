@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useAtom } from 'jotai'
 import { Item } from '@/lib/Types';
 import { selectedItemsAtom } from '@/lib/jotai';
-import { Minus, Plus } from 'lucide-react';
+import { SquareMinus, SquarePlus } from 'lucide-react';
 
 const items = [
     {
@@ -104,7 +104,17 @@ export default function ItemsBox() {
                 return [...prevItems, { ...item, quantity: 1 }];
             }
         });
-        // console.log(selectedItems);
+    }
+
+    const handleRemoveItem = (item: Item) => {
+        setSelectedItems((prevItems) => {
+            const exixtingItem = prevItems.find((i) => i.id === item.id);
+            if (exixtingItem && exixtingItem.quantity > 1) {
+                return prevItems.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i));
+            } else {
+                return prevItems.filter((i) => i.id !== item.id);
+            }
+        });
     }
   return (
     <div className="my-2 w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -115,12 +125,16 @@ export default function ItemsBox() {
         >
           <button className='text-left  h-2/3' onClick={() => handleAddItem(item)}>
             <p>{item.name}</p>
-            <p>Rp.{item.price}</p>
+            <p className='text-sm'>Rp.{item.price}</p>
           </button>
-          <div className='flex self-end'>
-            <Plus />
-            <p className='self-end'>{selectedItems.find((i) => i.id === item.id)?.quantity || 0}</p>
-            <Minus />
+          <div className='flex items-center self-end'>
+            <button onClick={() => handleAddItem(item)}>
+                <SquarePlus />
+            </button>
+            <p className='w-4 text-center text-sm'>{selectedItems.find((i) => i.id === item.id)?.quantity || 0}</p>
+            <button onClick={() => handleRemoveItem(item)}>
+                <SquareMinus />
+            </button>
           </div>
         </div>
       ))}
