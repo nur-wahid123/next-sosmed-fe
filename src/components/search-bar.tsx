@@ -1,8 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from './ui/input'
 import { Search } from 'lucide-react'
+import { Item } from '@/lib/Types';
 
-export default function SearchBar() {
+export default function SearchBar({items}: {items: Item[]}) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredItems = 
+        searchQuery === ""
+            ? items
+            : items.filter((item) => (
+                item.name.toLowerCase()
+                .replace(/\s+/g, "")
+                .includes(searchQuery.toLowerCase().replace(/\s+/g, ""))
+            ));
   return (
     <div className="flex items-center">
       <div className="flex items-center">
