@@ -1,12 +1,18 @@
+"use client"
 import React from 'react'
 
-const categories = ['Food', 'Drink', 'Snack', 'Others', 'New Product', 'Anothers', 'lorem'];
+// const categories = ['Food', 'Drink', 'Snack', 'Others', 'New Product', 'Anothers', 'lorem'];
 
-export default function CategoryBox() {
+export default function CategoryBox({ categories}: { categories: string[] }) {
+  console.log(categories)
+  const handleClick = (category: string) => {
+    console.log(category)
+  }
+
   return (
-    <div className="my-2 w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-      {categories.map((category) => (
-        <button key={category} className="p-2 h-28 rounded-md bg-slate-100">
+    <div className="my-2 h-64 w-[55vw] overflow-y-auto grid grid-rows-3 grid-flow-col gap-2">
+      {categories.map((category: string) => (
+        <button key={category} className="p-2 w-28 rounded-md bg-slate-100" onClick={() => handleClick(category)}>
           <p>{category}</p>
         </button>
       ))}
