@@ -1,12 +1,22 @@
 "use client"
-import React from 'react'
+import { fetchCategories } from '@/services/api';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 
 // const categories = ['Food', 'Drink', 'Snack', 'Others', 'New Product', 'Anothers', 'lorem'];
 
-export default function CategoryBox({ categories}: { categories: string[] }) {
-  console.log(categories)
+export default function CategoryBox() {
+  const categoryParams = useSearchParams();
+  const router = useRouter();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetchCategories().then((data) => {
+      setCategories(data);
+    })
+  },[])
   const handleClick = (category: string) => {
-    console.log(category)
+    router.push(`/dashboard/pos?category=${category}`)
   }
 
   return (

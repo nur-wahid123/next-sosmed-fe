@@ -13,6 +13,27 @@ export async function fetchCategories() {
 }
 
 export async function fetchProductsByCategory(category:string) {
-    const response = await axios.get(`${API_URL}/products/category/${category}`);
-    return response.data;
+    try {
+        const response = await axios.get(`${API_URL}/products/category/${category}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
+}
+
+export async function fetchProducts(searchQuery:string) {
+    try {
+        const response = await axios.get(`${API_URL}/products/search?q=${searchQuery}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
+}
+
+export const updateSearchParams = (type: string, value: string) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set(type, value);
+
+    const newPathUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    return newPathUrl;
 }
