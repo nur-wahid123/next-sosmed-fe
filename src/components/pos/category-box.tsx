@@ -9,6 +9,7 @@ export default function CategoryBox() {
   const categoryParams = useSearchParams();
   const router = useRouter();
   const [categories, setCategories] = useState([]);
+  const category = categoryParams.get("category");
 
   useEffect(() => {
     fetchCategories().then((data) => {
@@ -22,7 +23,13 @@ export default function CategoryBox() {
   return (
     <div className="my-2 h-64 w-[55vw] overflow-y-auto grid grid-rows-3 grid-flow-col gap-2">
       {categories.map((category: string) => (
-        <button key={category} className="p-2 w-28 rounded-md bg-slate-100" onClick={() => handleClick(category)}>
+        <button 
+          key={category} 
+          className={category === categoryParams.get("category") ? 
+            "p-2 w-28 rounded-md bg-slate-700 text-white" 
+            : "p-2 w-28 rounded-md bg-slate-100" }
+          onClick={() => handleClick(category)}
+        >
           <p>{category}</p>
         </button>
       ))}
