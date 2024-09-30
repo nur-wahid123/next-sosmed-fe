@@ -1,24 +1,46 @@
-import React, { useState } from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import { Input } from './ui/input'
 import { Search } from 'lucide-react'
-import { Item } from '@/lib/Types';
+import useDebounce from '@/hooks/useDebounce';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function SearchBar({items}: {items: Item[]}) {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function SearchBar() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const deboucedQuery = useDebounce(query, 500);
 
-  const filteredItems = 
-        searchQuery === ""
-            ? items
-            : items.filter((item) => (
-                item.name.toLowerCase()
-                .replace(/\s+/g, "")
-                .includes(searchQuery.toLowerCase().replace(/\s+/g, ""))
-            ));
+  useEffect(() => {
+     const initialQuery = searchParams.get("search") || "";
+     setQuery(initialQuery);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if(deboucedQuery.trim() !== (searchParams.get("search") || "").toString().trim()) {
+      if (deboucedQuery.trim() === "") {
+        router.push(`/dashboard/pos`);
+      } else {
+        router.push(`/dashboard/pos?search=${deboucedQuery}`)
+      }
+    }
+  }, [deboucedQuery, router, searchParams]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  } 
+
   return (
     <div className="flex items-center">
       <div className="flex items-center">
         <div className="relative rounded-lg bg-gray-100 dark:bg-gray-800 w-48">
-          <Input type="text" placeholder="Search" className="rounded-lg appearance-none w-48 pl-8 text-xs" />
+          <Input 
+            type="text" 
+            placeholder="Search" 
+            className="rounded-lg appearance-none w-48 pl-8 text-xs" 
+            onChange={handleSearch}
+            value={query}
+          />
           <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400 dark:text-gray-600" />
         </div>
       </div>
