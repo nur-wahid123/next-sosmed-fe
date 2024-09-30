@@ -13,7 +13,7 @@ export default function POSPage() {
         <div className='flex-1 w-full'>
             <SearchBar />
             <CategoryBox />
-            <Separator className='my-2'/>
+            <Separator className='my-4'/>
             <ProductsContainer />
             {/* <ItemsBox/> */}
         </div>

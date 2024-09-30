@@ -10,12 +10,12 @@ export default function Cart() {
            <div className='max-h-[55vh] overflow-y-auto'>
             <ul className='flex flex-col gap-2'>
                 {selectedItems.map((item, index) => (
-                    <li key={item.name} className='flex p-2 justify-between items-center bg-slate-200 rounded-md'>
+                    <li key={item.id} className='flex p-2 justify-between items-center bg-slate-200 rounded-md'>
                         <div className='flex gap-2 items-center'>
                             <p className='p-1 w-6 h-6 text-xs text-center rounded-full bg-white '>
                                 {index + 1}
                             </p>
-                            <p>{item.name}</p>
+                            <p>{item.title}</p>
                             <p className='text-sm text-slate-500'>x{item.quantity}</p>
                         </div>
                         <p>Rp.{item.price * item.quantity}</p>
