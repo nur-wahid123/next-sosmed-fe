@@ -9,7 +9,7 @@ export class LoginForm{
 
 export type Item = {
     id: number
-    name: string
+    title: string
     price: number
     quantity: number
     category: string
