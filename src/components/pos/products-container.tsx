@@ -1,60 +1,12 @@
 "use client";
 import { selectedItemsAtom } from '@/lib/jotai';
-import { fetchProducts, fetchProductsByCategory } from '@/services/api';
 import { Item } from '@/types';
 import { useAtom } from 'jotai';
 import { SquareMinus, SquarePlus } from 'lucide-react';
-import { useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-export default function ProductsContainer() {
-   const searchParams = useSearchParams();
-    const search = searchParams.get("search");
-    const category = searchParams.get("category");
-
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
+export default function ProductsContainer({products}: {products: Item[]}) {
     const [selectedProducts, setSelectedProducts] = useAtom(selectedItemsAtom);
-
-    useEffect(() => {
-        if(search){
-            fetchItems(search as string)
-        } else if (category) {
-            fetchItemsByCategory(category as string)
-        } else {
-            // fetchItemsByCategory("smartphones")
-            setProducts([])
-        }
-        
-    }, [search, category]);
-
-    const fetchItems = async (searchQuery: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const { products } = await fetchProducts(searchQuery);
-            setProducts(products);
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const fetchItemsByCategory = async (category: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const { products } = await fetchProductsByCategory(category);
-            setProducts(products);
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }
 
     const handleAddItem = (item: Item) => {
         setSelectedProducts((prevItems) => {
@@ -80,11 +32,7 @@ export default function ProductsContainer() {
 
   return (
     <div className="my-2 h-[56vh] overflow-y-auto w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-        {loading ? (
-            <p>Loading...</p>
-        ): error ? (
-            <p>{error}</p>
-        ): products.length > 0 ? (
+        {products.length > 0 ? (
             <>
                 {products.map((product: any) => (
                     <div 
