@@ -1,4 +1,5 @@
 // atoms/cartAtoms.ts
+import { Item } from '@/types';
 import { atom } from 'jotai';
 import Cookies from 'js-cookie';
 
@@ -8,15 +9,15 @@ export const cartAtom = atom(
     ? JSON.parse(Cookies.get('cart') as string)
     : { cartItems: [], paymentMethod: '' }
 );
-
+ 
 export const cartItemsAtom = atom(
   (get) => get(cartAtom).cartItems,
-  (get, set, newItem) => {
+  (get, set, newItem: Item) => {
     const cart = get(cartAtom);
-    const existItem = cart.cartItems.find((item) => item._id === newItem._id);
+    const existItem = cart.cartItems.find((item: Item) => item.id === newItem.id);
     const cartItems = existItem
-      ? cart.cartItems.map((item) =>
-          item._id === existItem._id ? newItem : item
+      ? cart.cartItems.map((item: Item) =>
+          item.id === existItem._id ? newItem : item
         )
       : [...cart.cartItems, newItem];
 

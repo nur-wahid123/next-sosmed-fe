@@ -1,34 +1,30 @@
-"use client"
-import { fetchCategories } from '@/services/api';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+'use client';
 
-// const categories = ['Food', 'Drink', 'Snack', 'Others', 'New Product', 'Anothers', 'lorem'];
+import React, { useEffect, useState } from 'react';
 
-export default function CategoryBox() {
-  const categoryParams = useSearchParams();
-  const router = useRouter();
-  const [categories, setCategories] = useState([]);
-  const category = categoryParams.get("category");
+interface CategoryBoxProps {
+  categories: string[];
+  onSelectedCategory: (category: string) => void; 
+}
+
+export default function CategoryBox({ categories, onSelectedCategory }: CategoryBoxProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>("beauty");
 
   useEffect(() => {
-    fetchCategories().then((data) => {
-      setCategories(data);
-    })
-  },[])
-  const handleClick = (category: string) => {
-    router.push(`/dashboard/pos?category=${category}`)
-  }
+    onSelectedCategory(selectedCategory);
+  }, [selectedCategory, onSelectedCategory]);
 
   return (
     <div className="my-2 h-64 w-[55vw] overflow-y-auto grid grid-rows-3 grid-flow-col gap-2">
-      {categories.map((category: string) => (
-        <button 
-          key={category} 
-          className={category === categoryParams.get("category") ? 
-            "p-2 w-28 rounded-md bg-slate-700 text-white" 
-            : "p-2 w-28 rounded-md bg-slate-100" }
-          onClick={() => handleClick(category)}
+      {categories.map((category) => (
+        <button
+          key={category}
+          className={
+            selectedCategory === category
+              ? "p-2 w-28 rounded-md bg-slate-200"
+              : "p-2 w-28 rounded-md bg-slate-100"
+          }
+          onClick={() => setSelectedCategory(category)} // Select one category at a time
         >
           <p>{category}</p>
         </button>
@@ -36,4 +32,3 @@ export default function CategoryBox() {
     </div>
   );
 }
-
