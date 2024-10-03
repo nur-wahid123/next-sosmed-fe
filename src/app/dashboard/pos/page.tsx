@@ -4,8 +4,9 @@ import SearchBar from '@/components/search-bar'
 import { Separator } from '@/components/ui/separator'
 import Cart from '@/components/pos/cart'
 import ProductsContainer from '@/components/pos/products-container'
-import { fetchCategories, fetchProducts, fetchProductsByCategory } from '@/services/api'
 import { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
+import API_ENDPOINT from '../../../../config/endpoint'
 
 export default function POSPage() {
   const [ products, setProducts ] = useState([])
@@ -13,21 +14,23 @@ export default function POSPage() {
 
   useEffect(() => {
     const fetchCategoriesData = async () => {
-      const data = await fetchCategories()
-      setCategories(data)
+      await axios.get(`${API_ENDPOINT.DUMMY}/products/category-list`).then((res) => {
+        setCategories(res.data)
+      });
     }
     fetchCategoriesData()
   }, [])
 
   const handleSearch = useCallback(async (query: string) => {
-    const data = await fetchProducts(query)
-    setProducts(data.products)
+    await axios.get(`${API_ENDPOINT.DUMMY}/products/search?q=${query}`).then((res) => {
+      setProducts(res.data)
+    });
   }, []);
 
   const handleSelectedCategory = useCallback(async (category: string) => {
-    const data = await fetchProductsByCategory(category)
-    setProducts(data.products)
-    console.log(data)
+    await axios.get(`${API_ENDPOINT.DUMMY}/products/category/${category}`).then((res) => {
+      setProducts(res.data.products)
+    });
   }, []);
 
   return (
