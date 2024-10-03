@@ -5,9 +5,11 @@ import { useAtomValue } from 'jotai'
 import { selectedItemsAtom } from '@/lib/jotai';
 export default function Cart() {
     const selectedItems = useAtomValue(selectedItemsAtom);
+    const subTotal = selectedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
   return (
-    <div className='flex flex-col gap-2 h-full'>
-           <div className='max-h-[55vh] overflow-y-auto'>
+    <div className='flex flex-col h-full'>
+           <div className='mb-2 max-h-[55vh] overflow-y-auto'>
             <ul className='flex flex-col gap-2'>
                 {selectedItems.map((item, index) => (
                     <li key={item.id} className='flex p-2 justify-between items-center bg-slate-200 rounded-md'>
@@ -24,12 +26,12 @@ export default function Cart() {
             </ul>
            </div>
 
-           <div className='p-2 pt-4 flex flex-1 flex-col justify-between rounded-md bg-slate-200'>
+           <div className='p-4 flex flex-1 flex-col justify-between rounded-md bg-slate-200'>
                 {selectedItems.length > 0 ? (
                     <div className='flex flex-col gap-4'>
                         <div className='flex justify-between'>
                             <p>SubTotal</p>
-                            <p>Rp.45000</p>
+                            <p>Rp.{subTotal}</p>
                         </div>
                         <div className='flex justify-between'>
                             <p>Discount</p>
@@ -38,7 +40,7 @@ export default function Cart() {
                         <div className="border-b-2 border-dashed border-black" />
                         <div className='flex justify-between text-lg font-bold'>
                             <p>Total</p>
-                            <p>Rp.45000</p>
+                            <p>Rp.{subTotal}</p>
                         </div>
                     </div>
                 ):(

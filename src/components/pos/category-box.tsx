@@ -15,7 +15,7 @@ export default function CategoryBox({ categories, onSelectedCategory }: Category
   }, [selectedCategory, onSelectedCategory]);
 
   return (
-    <div className="my-2 h-64 w-[55vw] overflow-y-auto grid grid-rows-3 grid-flow-col gap-2">
+    <div className="overflow-y-auto grid grid-rows-3 grid-flow-col gap-2">
       {categories.map((category) => (
         <button
           key={category}
