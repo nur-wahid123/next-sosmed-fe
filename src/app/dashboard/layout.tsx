@@ -50,20 +50,20 @@ export default function DashboardLayout({ children } : { children: React.ReactNo
   return (
     <div className='h-screen flex flex-col'>
         <div className='flex w-full h-14'>
-            <div className='p-2 w-1/5'>
+            <div className='p-2 w-[20vw]'>
             <UserButton />
             </div>
             <Separator orientation='vertical'/>
         </div>
         <Separator />
         <div className='flex-1 flex w-full h-full'>
-            <div className='w-1/5 pt-2'>
+            <div className='w-[20vw] lg:w-[15vw] pt-2'>
              <Sidebar links={sidebarMenu}/>
             </div>
 
             <Separator orientation="vertical" />
 
-            <div className='flex-1 overflow-y-auto'>
+            <div className='flex-1 overflow-y-auto p-2'>
                 {children}
             </div>
         </div>

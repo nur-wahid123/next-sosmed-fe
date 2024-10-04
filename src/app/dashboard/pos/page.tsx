@@ -34,17 +34,21 @@ export default function POSPage() {
   }, []);
 
   return (
-    <div className='flex gap-2 p-2 w-full h-full'>
+    <div className='flex w-full h-full'>
         <div className='flex-1 w-full'>
             <SearchBar onSearch={handleSearch}/>
-            <CategoryBox 
-              categories={categories} 
-              onSelectedCategory={handleSelectedCategory}
-            />
+            <div className='my-2 w-[50vw]'>
+              <CategoryBox 
+                categories={categories} 
+                onSelectedCategory={handleSelectedCategory}
+              />
+            </div>
             <Separator className='my-4'/>
-            <ProductsContainer products={products}/>
+            <div className='mr-2 h-[50vh]'>
+              <ProductsContainer products={products}/>
+            </div>
         </div>
-        <div className='w-1/3 h-full'>
+        <div className='w-[25vw] xl:w-[20vw] h-[92vh]'>
             <Cart />
         </div>
     </div>
