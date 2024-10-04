@@ -1,7 +1,6 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
-import { LoginForm } from "@/lib/Types";
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+import { LoginForm } from "@/types";
 
 const Page = () => {
   const [loginForm, setLoginForm] = useState<LoginForm>({ username: '', password: '' });
