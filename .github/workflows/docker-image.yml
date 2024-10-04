@@ -1,4 +1,3 @@
-
 name: Docker Image CI
 
 on:
@@ -8,7 +7,7 @@ on:
 
 env:
   REGISTRY_URL: docker.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: farhanzip/pos # Set your Docker Hub repository name here (not GitHub repo name)
 
 jobs:
   build_image:
@@ -33,7 +32,7 @@ jobs:
       run: docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:latest
 
     - name: Push Image
-      run: docker push $REGISTRY_URL/${{ secrets.DOCKERHUB_USERNAME }}/pos:latest
+      run: docker push $REGISTRY_URL/$IMAGE_NAME:latest
 
     - name: Remove the image with latest tag
       run: docker rmi $REGISTRY_URL/$IMAGE_NAME:latest
