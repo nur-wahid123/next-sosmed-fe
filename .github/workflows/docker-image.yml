@@ -1,0 +1,45 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY_URL: docker.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      id: docker-hub
+
+    - run: | 
+        echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: Set Image Tag
+      run: echo "IMAGE_TAG=$(date +%s)" >> $GITHUB_ENV
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME:$IMAGE_TAG
+
+    - name: Tag the Docker image
+      run: docker tag $IMAGE_NAME:$IMAGE_TAG $REGISTRY_URL/$IMAGE_NAME:latest
+
+    - name: Push Image
+      run: docker push $REGISTRY_URL/$IMAGE_NAME:latest
+
+    - name: Remove the image with latest tag
+      run: docker rmi $REGISTRY_URL/$IMAGE_NAME:latest
+
+    - name: Remove the local image
+      run: docker rmi $IMAGE_NAME:$IMAGE_TAG
+
+    - name: Prune unused Docker resources
+      run: docker system prune -a -f
