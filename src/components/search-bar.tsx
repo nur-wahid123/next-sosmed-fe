@@ -1,18 +1,21 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { Input } from './ui/input';
-import { Search } from 'lucide-react';
-import useDebounce from '@/hooks/useDebounce';
+import React, { useEffect, useState } from "react";
+import { Input } from "./ui/input";
+import { Search } from "lucide-react";
+import useDebounce from "@/hooks/useDebounce";
 
-
-export default function SearchBar({ onSearch }: { onSearch: (query: string) => void }) {
+export default function SearchBar({
+  onSearch,
+}: {
+  onSearch: (query: string) => void;
+}) {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 500);
 
   useEffect(() => {
     if (debouncedQuery.trim()) {
       onSearch(debouncedQuery);
-    } 
+    }
   }, [debouncedQuery, onSearch]);
 
   return (

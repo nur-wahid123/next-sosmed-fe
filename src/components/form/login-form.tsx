@@ -45,6 +45,9 @@ export default function LoginForm() {
         username: data.username,
         password: data.password,
       });
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.data.access_token);
+      }
       // console.log(response);
       router.push("/dashboard");
     } catch (error) {
