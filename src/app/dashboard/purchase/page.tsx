@@ -17,7 +17,7 @@ export default function POSPage() {
     []
   );
   const [saleCode, setSaleCode] = useState<string>("");
-  const [tab, setTab] = useState<"sale" | "payment">("sale");
+  const [tab, setTab] = useState<"purchase" | "payment">("purchase");
 
   const fetchCategoriesData = async (search?: string) => {
     const url =
@@ -68,36 +68,19 @@ export default function POSPage() {
     <Tabs
       value={tab}
       onValueChange={(e) => {
-        setTab(e as "sale" | "payment");
+        setTab(e as "purchase" | "payment");
       }}
       className="w-full h-full overflow-y-auto"
     >
       <TabsList>
-        <TabsTrigger value="sale">Sale</TabsTrigger>
+        <TabsTrigger value="purchase">Purchase</TabsTrigger>
         <TabsTrigger value="payment">Payment</TabsTrigger>
       </TabsList>
-      <TabsContent className="w-full h-full" value="sale">
+      <TabsContent className="w-full h-full" value="purchase">
         <h1 className="scroll-m-20 mb-2 text-2xl font-extrabold tracking-tight lg:text-5xl">
-          Cashier
+          Purchase
         </h1>
-        <div className="flex w-full">
-          <div className="w-2/3">
-            <SearchBar onSearch={handleSearch} />
-            <div className="my-2 w-[50vw]">
-              <CategoryBox
-                categories={categories}
-                onSelectedCategory={handleSelectedCategory}
-              />
-            </div>
-            <Separator className="my-4" />
-            <div className="mr-2 h-[50vh]">
-              <ProductsContainer products={products} />
-            </div>
-          </div>
-          <div className="w-1/3">
-            <Cart setTab={setTab} setSaleCode={setSaleCode} />
-          </div>
-        </div>
+        <div className="flex w-full"></div>
       </TabsContent>
       <TabsContent value="payment">
         <div className="w-full h-full">

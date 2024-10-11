@@ -25,7 +25,7 @@ import API_ENDPOINT from "../../../config/endpoint";
 import { Input } from "../ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-export default function Payment({ sale_code }: { sale_code?: string }) {
+export default function PaymentPurchase({ sale_code }: { sale_code?: string }) {
   const [sale, setSale] = React.useState<any>();
   const [open, setOpen] = React.useState(false);
   const [needToPay, setNeedToPay] = React.useState<{

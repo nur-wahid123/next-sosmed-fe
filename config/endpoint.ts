@@ -6,6 +6,9 @@ const API_ENDPOINT = {
     CATEGORY_LIST: `${CONFIG.BASE_URL}/categories`,
     PRODUCT_LIST: `${CONFIG.BASE_URL}/products/all`,
     CREATE_SALE: `${CONFIG.BASE_URL}/sales/create`,
+    GET_SALE: `${CONFIG.BASE_URL}/sales/list`,
+    PAY_SALE: `${CONFIG.BASE_URL}/sales/payment`,
+    CHECK_SALE_NEED_TO_PAY: `${CONFIG.BASE_URL}/sales/need-to-pay`,
     DUMMY: `https://dummyjson.com`,
 } as const
 

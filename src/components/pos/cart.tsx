@@ -17,8 +17,10 @@ interface ErrorResponse {
 }
 export default function Cart({
   setTab,
+  setSaleCode,
 }: {
   setTab: Dispatch<SetStateAction<"sale" | "payment">>;
+  setSaleCode: Dispatch<SetStateAction<string>>;
 }) {
   const [selectedItems, setSelectedItems] = useAtom(selectedItemsAtom);
   const toast = useToast();
@@ -49,6 +51,7 @@ export default function Cart({
     axiosInstance
       .post(API_ENDPOINT.CREATE_SALE, createSaleDto)
       .then((res) => {
+        setSaleCode(res.data.code);
         setTab("payment");
       })
       .catch((err: AxiosError<ErrorResponse>) => {

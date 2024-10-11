@@ -19,8 +19,8 @@ const sidebarMenu = [
     icon: ScanBarcode,
   },
   {
-    title: "Report",
-    href: "/dashboard/report",
+    title: "Purchase",
+    href: "/dashboard/purchase",
     icon: File,
   },
   {
@@ -54,13 +54,6 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="h-screen flex flex-col">
-      <div className="flex w-full h-14">
-        <div className="p-2 w-[20vw]">
-          <UserButton />
-        </div>
-        <Separator orientation="vertical" />
-      </div>
-      <Separator />
       <div className="flex-1 flex w-full h-full">
         <div className="w-[20vw] lg:w-[15vw] pt-2">
           <Sidebar links={sidebarMenu} />

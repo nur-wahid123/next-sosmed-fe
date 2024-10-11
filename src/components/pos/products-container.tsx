@@ -61,7 +61,7 @@ export default function ProductsContainer({ products }: { products: Item[] }) {
                     {formatPrice(Number(product.sellPrice))}
                   </p>
                 </button>
-                <div className="flex bg-white rounded-md p-2 items-center self-end">
+                <div className="flex bg-white rounded-md gap-3 p-2 items-center self-end">
                   <button
                     onClick={() =>
                       handleAddItem(product, product.inventory.qty as number)
