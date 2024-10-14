@@ -1,6 +1,6 @@
 "use client";
 
-import { toTitleCase } from "@/utils/text.util";
+import { toTitleCase } from "@/utils/util";
 import React, { useEffect, useState } from "react";
 
 interface CategoryBoxProps {
