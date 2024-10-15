@@ -1,19 +1,11 @@
 "use client";
-import CategoryBox from "@/components/pos/category-box";
-import SearchBar from "@/components/search-bar";
-import { Separator } from "@/components/ui/separator";
-import Cart from "@/components/pos/cart";
-import ProductsContainer from "@/components/pos/products-container";
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
-import API_ENDPOINT from "../../../../config/endpoint";
-import axiosInstance from "@/utils/axios-util";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Payment from "@/components/pos/payment";
-import PurchaseItemsTable from "@/components/pos/purchase-items.table";
+import PurchaseItemsTable, {
+  CartItem,
+} from "@/components/pos/purchase-items.table";
+import PaymentDetail from "@/components/pos/payment-detail";
 import PaymentPurchase from "@/components/pos/payment-purchase";
-import { Package, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export class PurchaseItem {
   id!: number;
@@ -29,11 +21,9 @@ export class PurchaseItem {
 }
 
 export default function PurchasePage() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
-    []
-  );
-  const [saleCode, setSaleCode] = useState<string>("");
+  const [carts, setCart] = useState<CartItem[]>();
+
+  const [purchaseCode, setPurchaseCode] = useState<string>("");
   const [tab, setTab] = useState<"purchase" | "payment">("purchase");
   useEffect(() => {}, []);
 
@@ -53,10 +43,14 @@ export default function PurchasePage() {
         <h1 className="scroll-m-20 mb-2 text-2xl font-extrabold tracking-tight lg:text-5xl">
           Purchase
         </h1>
-        <div className="flex flex-col gap-4 items-start">
+        <div className="flex flex-col h-full gap-4 items-start">
           <div className="flex h-full w-full gap-5">
-            <PaymentPurchase />
-            <PurchaseItemsTable />
+            <PaymentDetail
+              carts={carts}
+              setPurchaseCode={setPurchaseCode}
+              setTab={setTab}
+            />
+            <PurchaseItemsTable carts={carts} setCart={setCart} />
           </div>
         </div>
       </TabsContent>
@@ -65,6 +59,7 @@ export default function PurchasePage() {
           <h1 className="scroll-m-20 mb-2 text-2xl font-extrabold tracking-tight lg:text-5xl">
             Purchase Payment
           </h1>
+          <PaymentPurchase purchase_code={purchaseCode} />
         </div>
       </TabsContent>
     </Tabs>

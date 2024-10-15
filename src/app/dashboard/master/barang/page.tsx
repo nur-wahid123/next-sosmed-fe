@@ -36,10 +36,12 @@ declare module "@tanstack/react-table" {
   }
 }
 export class Product {
+  id?: number = 0;
   name?: string = "";
   code?: string = "";
   sellPrice?: number = 0;
   category?: { name: string } = { name: "" };
+  uom?: { name: string } = { name: "" };
   inventory?: { qty: number } = { qty: 0 };
 }
 export class Category {
@@ -120,17 +122,14 @@ export default function Page() {
     axiosInstance.get(API_ENDPOINT.PRODUCT_LIST).then((res) => {
       if (Array.isArray(res.data)) {
         const p: Product[] = [];
-        res.data.map((data, i) => {
-          //   if (i > 9) return;
+        res.data.map((data) => {
           p.push(
             mapResponseToClass(data, Product, {
               name: "name",
             })
           );
-          //   return mapResponseToClass(data, Product);
         });
 
-        // console.log(p);
         setProducts(p);
       }
     });

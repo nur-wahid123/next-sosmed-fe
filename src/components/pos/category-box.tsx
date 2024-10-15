@@ -12,7 +12,7 @@ export default function CategoryBox({
   categories,
   onSelectedCategory,
 }: CategoryBoxProps) {
-  const [selectedCategory, setSelectedCategory] = useState<number>(5);
+  const [selectedCategory, setSelectedCategory] = useState<number>(3);
 
   useEffect(() => {
     onSelectedCategory(selectedCategory);

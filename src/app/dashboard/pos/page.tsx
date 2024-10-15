@@ -22,8 +22,8 @@ export default function POSPage() {
   const fetchCategoriesData = async (search?: string) => {
     const url =
       search && search != ""
-        ? `${API_ENDPOINT.CATEGORY_LIST}?search=${search}`
-        : `${API_ENDPOINT.CATEGORY_LIST}`;
+        ? `${API_ENDPOINT.CATEGORY_CASHEER}?search=${search}`
+        : `${API_ENDPOINT.CATEGORY_CASHEER}`;
     await axiosInstance
       .get(url)
       .then((res) => {
