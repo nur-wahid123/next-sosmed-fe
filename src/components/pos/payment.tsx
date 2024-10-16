@@ -24,10 +24,13 @@ import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
 import { Input } from "../ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 
 export default function Payment({ sale_code }: { sale_code?: string }) {
   const [sale, setSale] = React.useState<any>();
   const [open, setOpen] = React.useState(false);
+  const [isFullPaid, setIsFullPaid] = React.useState(false);
   const [needToPay, setNeedToPay] = React.useState<{
     needToPay: number;
     lateFees: number;
@@ -45,14 +48,17 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
       });
     }
     return () => {};
-  }, []);
+  }, [sale_code]);
+
+  function handleFullPay() {
+    setPay(needToPay?.needToPay ?? 0);
+  }
 
   React.useEffect(() => {
     if (sale) {
       axiosInstance
         .get(`${API_ENDPOINT.CHECK_SALE_NEED_TO_PAY}?sale_code=${sale.code}`)
         .then((res) => {
-          console.log(res);
           setNeedToPay({
             needToPay: res.data.needToPay,
             lateFees: res.data.lateFees,
@@ -70,7 +76,7 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
           });
         });
     }
-  }, [sale]);
+  }, [sale, toast]);
 
   function handlePay() {
     if (sale) {
@@ -104,6 +110,15 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
     const numericValue = e.target.value.replace(/\D/g, "");
     setPay(Number(numericValue));
   };
+
+  React.useEffect(() => {
+    if (isFullPaid) {
+      setPay(needToPay?.needToPay ?? 0);
+    } else {
+      setPay(0);
+    }
+    return () => {};
+  }, [isFullPaid, needToPay?.needToPay]);
 
   return (
     <div className="flex flex-col gap-4 items-start">
@@ -237,11 +252,16 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
           </div>
           {sale && sale.paymentStatus !== "paid" && (
             <>
+              <div className="flex items-center gap-4">
+                <Switch checked={isFullPaid} onCheckedChange={setIsFullPaid} />
+                <Label className="text-xl">Full Paid</Label>
+              </div>
               <div className="relative flex items-center">
                 <span className="absolute left-3 font-bold text-3xl pointer-events-none">
                   Rp.
                 </span>
                 <Input
+                  disabled={isFullPaid}
                   type="text"
                   inputMode="numeric"
                   className="pl-10 h-fit text-2xl font-semibold text-right"

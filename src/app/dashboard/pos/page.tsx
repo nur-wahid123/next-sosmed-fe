@@ -52,7 +52,7 @@ export default function POSPage() {
     }
     await fetchCategoriesData(query);
     await axiosInstance.get(url).then((res) => {
-      setProducts(res.data);
+      setProducts(res.data.data);
     });
   }, []);
 
@@ -60,7 +60,7 @@ export default function POSPage() {
     await axiosInstance
       .get(`${API_ENDPOINT.PRODUCT_LIST}?category_id=${category}`)
       .then((res) => {
-        setProducts(res.data);
+        setProducts(res.data.data);
       });
   }, []);
 

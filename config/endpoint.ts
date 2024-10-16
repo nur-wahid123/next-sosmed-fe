@@ -4,7 +4,7 @@ const API_ENDPOINT = {
     URL_LOGIN: `${CONFIG.BASE_URL}/auth/login`,
     TRY_URL: `${CONFIG.BASE_URL}/hello`,
     CATEGORY_LIST: `${CONFIG.BASE_URL}/categories`,
-    CATEGORY_CASHEER: `${CONFIG.BASE_URL}/categories/casheer`,
+    CATEGORY_CASHEER: `${CONFIG.BASE_URL}/categories/cashier`,
     PRODUCT_LIST: `${CONFIG.BASE_URL}/products/all`,
     SUPPLIER_LIST: `${CONFIG.BASE_URL}/suppliers`,
     CREATE_SALE: `${CONFIG.BASE_URL}/sales/create`,

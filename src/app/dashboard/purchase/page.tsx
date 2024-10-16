@@ -49,6 +49,7 @@ export default function PurchasePage() {
               carts={carts}
               setPurchaseCode={setPurchaseCode}
               setTab={setTab}
+              setCart={setCart}
             />
             <PurchaseItemsTable carts={carts} setCart={setCart} />
           </div>
@@ -56,9 +57,6 @@ export default function PurchasePage() {
       </TabsContent>
       <TabsContent value="payment">
         <div className="w-full h-full">
-          <h1 className="scroll-m-20 mb-2 text-2xl font-extrabold tracking-tight lg:text-5xl">
-            Purchase Payment
-          </h1>
           <PaymentPurchase purchase_code={purchaseCode} />
         </div>
       </TabsContent>

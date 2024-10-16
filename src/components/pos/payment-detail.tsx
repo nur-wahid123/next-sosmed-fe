@@ -53,10 +53,12 @@ export default function PaymentDetail({
   carts,
   setPurchaseCode,
   setTab,
+  setCart,
 }: {
   carts?: CartItem[] | undefined;
   setPurchaseCode: Dispatch<SetStateAction<string>>;
   setTab: Dispatch<SetStateAction<"purchase" | "payment">>;
+  setCart: Dispatch<SetStateAction<CartItem[] | undefined>>;
 }) {
   const [value, setValue] = React.useState<Supplier | undefined>(undefined);
   const [suppliers, setSupplier] = React.useState<Supplier[]>([]);
@@ -78,6 +80,7 @@ export default function PaymentDetail({
       });
       return;
     }
+
     setFormData({ ...formData, supplier_id: value?.id ?? 0 });
     if (!carts || carts.length <= 0) {
       toast.toast({
@@ -108,10 +111,13 @@ export default function PaymentDetail({
         buy_price: Number(cart.product?.sellPrice ?? 0),
       });
     }
+    setFormData({ ...formData, supplier_id: value?.id ?? 0 });
 
     axiosInstance
       .post(API_ENDPOINT.CREATE_PURCHASE, {
-        ...formData,
+        supplier_id: value?.id ?? 0,
+        date: formData.date,
+        note: formData.note,
         purchase_items: purchaseItems,
       })
       .then((res) => {
@@ -121,6 +127,7 @@ export default function PaymentDetail({
             title: "Success",
           });
           setPurchaseCode(res.data.code);
+          setCart([]);
           setTab("payment");
         }
       })
@@ -190,7 +197,7 @@ export default function PaymentDetail({
                         setValue(
                           suppliers.find((s) => s.id === Number(currentValue))
                         );
-                        setOpen(false);
+                        setOpen2(false);
                       }}
                     >
                       <Check

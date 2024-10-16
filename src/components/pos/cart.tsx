@@ -51,6 +51,7 @@ export default function Cart({
     axiosInstance
       .post(API_ENDPOINT.CREATE_SALE, createSaleDto)
       .then((res) => {
+        setSelectedItems([]);
         setSaleCode(res.data.code);
         setTab("payment");
       })

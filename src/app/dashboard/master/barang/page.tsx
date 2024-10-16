@@ -14,27 +14,31 @@ import React, { useEffect, useState } from "react";
 import { mapResponseToClass, toTitleCase } from "@/utils/util";
 import { formatPrice } from "@/utils/currency.util";
 import {
-  Column,
   ColumnDef,
-  ColumnFiltersState,
-  FilterFn,
-  Row,
-  RowData,
+  ColumnSort,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
+  OnChangeFn,
+  Row,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import {
+  keepPreviousData,
+  QueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Button } from "@/components/ui/button";
-import { ArrowDown, ArrowUp } from "lucide-react";
-declare module "@tanstack/react-table" {
-  //allows us to define custom properties for our columns
-  interface ColumnMeta<TData extends RowData, TValue> {
-    filterVariant?: "text" | "range" | "select";
-  }
-}
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+} from "lucide-react";
 export class Product {
   id?: number = 0;
   name?: string = "";
@@ -47,24 +51,12 @@ export class Product {
 export class Category {
   name?: string = "";
 }
+
+const fetchSize = 20;
+
 export default function Page() {
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-
-  const nameFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
-    const { name, code } = row.getValue<{ name: string; code: string }>(
-      columnId
-    );
-    if (name.toLowerCase().includes(filterValue.toLowerCase())) {
-      return name.toLowerCase().includes(filterValue.toLowerCase());
-    } else {
-      return code.toLowerCase().includes(filterValue.toLowerCase());
-    }
-  };
-  const [products, setProducts] = React.useState<Product[]>([]);
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const columns = React.useMemo<ColumnDef<Product, any>[]>(
     () => [
       {
@@ -86,7 +78,6 @@ export default function Page() {
         meta: {
           filterVariant: "text",
         },
-        filterFn: nameFilterFn,
       },
       {
         accessorKey: "category",
@@ -100,148 +91,200 @@ export default function Page() {
     ],
     []
   );
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const table = useReactTable({
-    data: products,
-    columns,
-    filterFns: {},
-    state: {
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(), //client side filtering
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
-  });
+  async function fetchData(
+    start: number,
+    limit: number,
+    sorting: SortingState
+  ): Promise<{ data: Product[]; meta: { itemCount: number } }> {
+    const p: Product[] = [];
+    let itemCount = 0;
 
-  function fetchData() {
-    axiosInstance.get(API_ENDPOINT.PRODUCT_LIST).then((res) => {
-      if (Array.isArray(res.data)) {
-        const p: Product[] = [];
-        res.data.map((data) => {
+    try {
+      const res = await axiosInstance.get(
+        `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}`
+      );
+
+      if (Array.isArray(res.data.data)) {
+        res.data.data.forEach((data: any) => {
           p.push(
             mapResponseToClass(data, Product, {
               name: "name",
             })
           );
         });
-
-        setProducts(p);
       }
-    });
-    axiosInstance.get(API_ENDPOINT.CATEGORY_LIST).then((res) => {
-      if (Array.isArray(res.data)) {
-        const p: Category[] = [];
-        res.data.map((data, i) => {
-          //   if (i > 9) return;
-          p.push(
-            mapResponseToClass(data, Category, {
-              name: "name",
-            })
-          );
-          //   return mapResponseToClass(data, Product);
-        });
-
-        // console.log(p);
-        setCategories(p);
+      if (res.data.pagination.itemCount) {
+        itemCount = res.data.pagination.itemCount ?? 0;
       }
-    });
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+    if (sorting.length) {
+      const sort = sorting[0] as ColumnSort
+      const { id, desc } = sort as { id: keyof Product; desc: boolean }
+      p.sort((a, b) => {
+          if (desc) {
+            return a[id] < b[id] ? 1 : -1
+          }
+          return a[id] > b[id] ? 1 : -1
+      })
+    }
+
+    const a = {
+      data: p,
+      meta: {
+        itemCount,
+      },
+    };
+    return a;
   }
   useEffect(() => {
-    fetchData();
+    // fetchData(1, fetchSize);
+    // fetchNextPage();
     return () => {};
   }, []);
+
+  const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery({
+    queryKey: [
+      "product",
+      sorting, //refetch when sorting changes
+    ],
+    queryFn: async ({ pageParam = 1 }) => {
+      const start = pageParam as number;
+      const fetchedData = await fetchData(start, fetchSize,sorting); //pretend api call
+      return fetchedData;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (_lastGroup, groups) => groups.length,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
+  });
+
+  //flatten the array of arrays from the useInfiniteQuery hook
+  const flatData = React.useMemo(
+    () => data?.pages?.flatMap((page) => page.data) ?? [],
+    [data]
+  );
+  const totalDBRowCount = data?.pages?.[0]?.meta?.itemCount ?? 0;
+  const totalFetched = flatData.length;
+
+  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
+  const fetchMoreOnBottomReached = React.useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+        if (
+          scrollHeight - scrollTop - clientHeight < 400 &&
+          !isFetching &&
+          totalFetched < totalDBRowCount
+        ) {
+          fetchNextPage();
+        }
+      }
+    },
+    [fetchNextPage, isFetching, totalFetched, totalDBRowCount]
+  );
+
+  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
+  React.useEffect(() => {
+    fetchMoreOnBottomReached(tableContainerRef.current);
+  }, [fetchMoreOnBottomReached]);
+
+  const table = useReactTable({
+    data: flatData,
+    columns,
+    state: {
+      sorting,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    manualSorting: false,
+    debugTable: true,
+  });
+
+  //scroll to top of table when sorting changes
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    setSorting(updater);
+    if (!!table.getRowModel().rows.length) {
+      rowVirtualizer.scrollToIndex?.(0);
+    }
+  };
+
+  //since this table option is derived from table row model state, we're using the table.setOptions utility
+  table.setOptions((prev) => ({
+    ...prev,
+    onSortingChange: handleSortingChange,
+  }));
+
+  const { rows } = table.getRowModel();
+
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    estimateSize: () => 33, //estimate row height for accurate scrollbar dragging
+    getScrollElement: () => tableContainerRef.current,
+    //measure dynamic row height, except in firefox because it measures table border height incorrectly
+    measureElement:
+      typeof window !== "undefined" &&
+      navigator.userAgent.indexOf("Firefox") === -1
+        ? (element) => element?.getBoundingClientRect().height
+        : undefined,
+    overscan: 5,
+  });
+
+  if (isLoading) {
+    return <>Loading...</>;
+  }
+
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
         Barang
       </h1>
-      <div className="p-2">
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <Button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </Button>
-          <Button
-            className="border rounded p-1"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </Button>
-          <Button
-            className="border rounded p-1"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </Button>
-          <Button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </Button>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </strong>
-          </span>
-          <span className="flex items-center gap-1">
-            | Go to page:
-            <input
-              type="number"
-              min="1"
-              max={table.getPageCount()}
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                table.setPageIndex(page);
+      <div className="w-full">
+        ({flatData.length} of {totalDBRowCount} rows fetched)
+        <div
+          className="w-full"
+          onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
+          ref={tableContainerRef}
+          style={{
+            overflow: "auto", //our scrollable table container
+            position: "relative", //needed for sticky header
+            height: "600px", //should be a fixed height
+          }}
+        >
+          {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
+          <Table style={{ display: "grid" }}>
+            <TableHeader
+              style={{
+                display: "grid",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                width: "100%",
               }}
-              className="border p-1 rounded w-16"
-            />
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-          <span>{table.getPrePaginationRowModel().rows.length} Rows</span>
-        </div>
-      </div>
-      <Table>
-        <TableCaption>List Barang</TableCaption>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <>
+            >
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  style={{ display: "flex", width: "100%" }}
+                >
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        style={{
+                          display: "flex",
+                          width: "100%",
+                        }}
+                      >
                         <div
                           {...{
                             className: header.column.getCanSort()
-                              ? "flex items-center gap-2 cursor-pointer select-none"
-                              : "flex items-center gap-2 ",
+                              ? "cursor-pointer select-none"
+                              : "",
                             onClick: header.column.getToggleSortingHandler(),
                           }}
                         >
@@ -250,138 +293,61 @@ export default function Page() {
                             header.getContext()
                           )}
                           {{
-                            asc: <ArrowUp />,
-                            desc: <ArrowDown />,
+                            asc: " 🔼",
+                            desc: " 🔽",
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter
-                              categories={categories}
-                              column={header.column}
-                            />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </TableHead>
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody
+              style={{
+                display: "grid",
+                height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
+                position: "relative", //needed for absolute positioning of rows
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const row = rows[virtualRow.index] as Row<Product>;
+                return (
+                  <TableRow
+                    data-index={virtualRow.index} //needed for dynamic row height measurement
+                    ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
+                    key={row.id}
+                    style={{
+                      display: "flex",
+                      position: "absolute",
+                      transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+                      width: "100%",
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            display: "flex",
+                            width: "100%",
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
                 );
               })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
-  );
-}
-
-function Filter({
-  column,
-  categories,
-}: {
-  column: Column<any, unknown>;
-  categories: Category[];
-}) {
-  const columnFilterValue = column.getFilterValue();
-  const { filterVariant } = column.columnDef.meta ?? {};
-
-  return filterVariant === "range" ? (
-    <div>
-      <div className="flex space-x-2">
-        {/* See faceted column filters example for min max values functionality */}
-        <DebouncedInput
-          type="number"
-          value={(columnFilterValue as [number, number])?.[0] ?? ""}
-          onChange={(value) =>
-            column.setFilterValue((old: [number, number]) => [value, old?.[1]])
-          }
-          placeholder={`Min`}
-          className="w-24 border shadow rounded"
-        />
-        <DebouncedInput
-          type="number"
-          value={(columnFilterValue as [number, number])?.[1] ?? ""}
-          onChange={(value) =>
-            column.setFilterValue((old: [number, number]) => [old?.[0], value])
-          }
-          placeholder={`Max`}
-          className="w-24 border shadow rounded"
-        />
+            </TableBody>
+          </Table>
+        </div>
+        {isFetching && <div>Fetching More...</div>}
       </div>
-      <div className="h-1" />
     </div>
-  ) : filterVariant === "select" ? (
-    <select
-      onChange={(e) => column.setFilterValue(e.target.value)}
-      value={columnFilterValue?.toString()}
-    >
-      {/* See faceted column filters example for dynamic select options */}
-      <option value="">All</option>
-      {categories.map((category) => (
-        <option value={toTitleCase(category.name as string)}>
-          {toTitleCase(category.name as string)}
-        </option>
-      ))}
-    </select>
-  ) : (
-    <DebouncedInput
-      className="w-36 border shadow rounded"
-      onChange={(value) => column.setFilterValue(value)}
-      placeholder={`Search...`}
-      type="text"
-      value={(columnFilterValue ?? "") as string}
-    />
-    // See faceted column filters example for datalist search suggestions
-  );
-}
-
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return (
-    <input
-      {...props}
-      value={value}
-      onChange={(e) => setValue(e.target.value)}
-    />
   );
 }

@@ -34,6 +34,7 @@ export default function PurchaseSearch({
     axiosInstance.get(url).then((res) => {
       if (Array.isArray(res.data.data)) {
         setPurchaseData(res.data.data);
+        console.log(res.data.data);
       }
     });
   }

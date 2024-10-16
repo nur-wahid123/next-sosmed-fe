@@ -25,6 +25,8 @@ import API_ENDPOINT from "../../../config/endpoint";
 import { Input } from "../ui/input";
 import { useToast } from "@/hooks/use-toast";
 import PurchaseSearch from "./search-sale copy";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 
 export default function PaymentPurchase({
   purchase_code,
@@ -33,6 +35,7 @@ export default function PaymentPurchase({
 }) {
   const [purchase, setPurchase] = React.useState<any>();
   const [open, setOpen] = React.useState(false);
+  const [isFullPaid, setIsFullPaid] = React.useState(false);
   const [needToPay, setNeedToPay] = React.useState<{
     needToPay: number;
     lateFees: number;
@@ -78,10 +81,6 @@ export default function PaymentPurchase({
     }
   }, [purchase]);
 
-  function handleFullPay() {
-    setPay(needToPay?.needToPay ?? 0);
-    handlePay();
-  }
   function handlePay() {
     if (purchase) {
       axiosInstance
@@ -114,6 +113,14 @@ export default function PaymentPurchase({
     const numericValue = e.target.value.replace(/\D/g, "");
     setPay(Number(numericValue));
   };
+
+  React.useEffect(() => {
+    if (isFullPaid) {
+      setPay(needToPay?.needToPay ?? 0);
+    } else {
+      setPay(0);
+    }
+  }, [isFullPaid]);
 
   return (
     <div className="flex flex-col gap-4 items-start">
@@ -256,11 +263,16 @@ export default function PaymentPurchase({
           </div>
           {purchase && purchase.paymentStatus !== "paid" && (
             <>
+              <div className="flex gap-4 items-center">
+                <Switch checked={isFullPaid} onCheckedChange={setIsFullPaid} />
+                <Label className="text-xl">Full Paid</Label>
+              </div>
               <div className="relative flex items-center">
                 <span className="absolute left-3 font-bold text-3xl pointer-events-none">
                   Rp.
                 </span>
                 <Input
+                  disabled={isFullPaid}
                   type="text"
                   inputMode="numeric"
                   className="pl-10 h-fit text-2xl font-semibold text-right"
@@ -270,7 +282,6 @@ export default function PaymentPurchase({
                 />
               </div>
               <Button onClick={handlePay}>Pay Now</Button>
-              <Button onClick={handleFullPay}>Full Paid</Button>
             </>
           )}
         </div>

@@ -43,9 +43,9 @@ export default function PurchaseItemsTable({
       ? `${API_ENDPOINT.PRODUCT_LIST}?search=${search}`
       : `${API_ENDPOINT.PRODUCT_LIST}`;
     axiosInstance.get(url).then((res) => {
-      if (Array.isArray(res.data)) {
+      if (Array.isArray(res.data.data)) {
         const p: Product[] = [];
-        res.data.map((data) => {
+        res.data.data.map((data: any) => {
           p.push(
             mapResponseToClass(data, Product, {
               name: "name",
