@@ -1,4 +1,5 @@
 "use client";
+import { AuthProvider } from "@/components/auth/auth.provider";
 import Sidebar from "@/components/navigation/sidebar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -53,6 +54,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
+    <AuthProvider>
     <div className="h-screen flex flex-col">
       <div className="flex-1 flex w-full h-full">
         <div className="w-[20vw] lg:w-[15vw] pt-2">
@@ -67,5 +69,6 @@ export default function DashboardLayout({
       </div>
       <Toaster />
     </div>
+    </AuthProvider>
   );
 }
