@@ -1,21 +1,38 @@
-import { useRouter } from "next/navigation"
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 
-import { createContext, useContext } from 'react';
+// Define the shape of the auth context
+interface AuthContextType {
+  token: string;
+  isAuthenticated: boolean;
+}
 
-const AuthContext = createContext({ token: "" , isAuthenticated: false });
+// Create the AuthContext with default values
+const AuthContext = createContext<AuthContextType>({ token: "", isAuthenticated: false });
 
+// AuthProvider component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token')??"";
+  const [token, setToken] = useState<string>("");  // Local state for token
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const router = useRouter();
 
-  if (token === "") {
-    router.push('/login');
-  }
+  // Use useEffect to run the localStorage and redirect logic on the client side
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token') ?? "";
+    setToken(storedToken);
+    setIsAuthenticated(!!storedToken);
+  }, [router]); // Runs after component mounts
 
+  // Define the context value to provide
   const authContext = {
     token,
-    isAuthenticated: !!token,
+    isAuthenticated,
   };
+
+  // Only render children after authentication check
+
+  console.log(isAuthenticated,token);
+  
 
   return (
     <AuthContext.Provider value={authContext}>
@@ -24,4 +41,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// Hook to use the AuthContext
 export const useAuth = () => useContext(AuthContext);
