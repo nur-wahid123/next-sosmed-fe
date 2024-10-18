@@ -13,10 +13,12 @@ export default function SearchBar({
   const debouncedQuery = useDebounce(query, 500);
 
   useEffect(() => {
-    if (debouncedQuery.trim()) {
       onSearch(debouncedQuery);
-    }
   }, [debouncedQuery, onSearch]);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(e.target.value);
+  }
 
   return (
     <div className="flex items-center">
@@ -26,7 +28,7 @@ export default function SearchBar({
             type="text"
             placeholder="Search"
             className="rounded-lg appearance-none w-48 pl-8 text-xs"
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleChange}
             value={query}
           />
           <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400 dark:text-gray-600" />

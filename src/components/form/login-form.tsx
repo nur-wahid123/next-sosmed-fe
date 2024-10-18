@@ -48,9 +48,7 @@ export default function LoginForm() {
       });
       if (response.status === 200) {
         Cookies.set("token", response.data.data.access_token,{expires:1});
-        // localStorage.setItem("token", response.data.data.access_token);
       }
-      // console.log(response);
       router.push("/dashboard");
     } catch (error) {
       loginForm.setError("password", {
