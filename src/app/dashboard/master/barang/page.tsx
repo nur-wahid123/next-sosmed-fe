@@ -1,8 +1,8 @@
 "use client";
+import {Filter} from "@/utils/util-filter"
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -15,9 +15,11 @@ import { mapResponseToClass, toTitleCase } from "@/utils/util";
 import { formatPrice } from "@/utils/currency.util";
 import {
   ColumnDef,
+  ColumnFiltersState,
   ColumnSort,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   OnChangeFn,
   Row,
@@ -26,19 +28,11 @@ import {
 } from "@tanstack/react-table";
 import {
   keepPreviousData,
-  QueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Button } from "@/components/ui/button";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-} from "lucide-react";
+
+import useDebounce from "@/hooks/useDebounce";
 export class Product {
   id?: number = 0;
   name?: string = "";
@@ -54,6 +48,16 @@ export class Category {
 
 const fetchSize = 20;
 
+function productFilterFn<TData, TValue>(
+  row: Row<TData>,
+  columnId: string,
+  value: TValue
+) {
+  const { name,code } = row.getValue<{ name: string,code:string }>(columnId);
+  return name.toLowerCase().includes((value as string).toLowerCase()) || code.toLowerCase().includes((value as string).toLowerCase());
+}
+
+
 export default function Page() {
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -66,6 +70,7 @@ export default function Page() {
           name: row.name,
           code: row.code,
         }),
+        filterFn: productFilterFn,
         cell: (info) => {
           const { name, code } = info.getValue();
           return (
@@ -75,24 +80,40 @@ export default function Page() {
             </div>
           );
         },
-        meta: {
-          filterVariant: "text",
-        },
       },
       {
         accessorKey: "category",
         header: "Category",
         cell: (info) => info.getValue(),
         accessorFn: (row) => toTitleCase(row.category?.name as string),
-        meta: {
-          filterVariant: "select",
-        },
       },
+      {
+        accessorKey: "sellPrice",
+        header: "Sell Price",
+        cell: (info) => {
+          const sellPrice = info.getValue();
+          return formatPrice(sellPrice);
+        },
+        accessorFn: (row) => row.sellPrice as number,
+      },
+      {
+        accessorKey: "inventory.qty",
+        header: "Inventory",
+        cell: (info) =>{
+          return info.getValue();
+        },
+        accessorFn: (row) => row.inventory?.qty ? row.inventory?.qty : 0,
+      }
     ],
     []
   );
+  const [search, setSearch] = useState("");
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  )
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const debounceFunc = useDebounce(search, 500);
 
   async function fetchData(
     start: number,
@@ -104,7 +125,7 @@ export default function Page() {
 
     try {
       const res = await axiosInstance.get(
-        `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}`
+        `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}&search=${search}`
       );
 
       if (Array.isArray(res.data.data)) {
@@ -125,12 +146,6 @@ export default function Page() {
     if (sorting.length) {
       const sort = sorting[0] as ColumnSort
       const { id, desc } = sort as { id: keyof Product; desc: boolean }
-      p.sort((a, b) => {
-          if (desc) {
-            return a[id] < b[id] ? 1 : -1
-          }
-          return a[id] > b[id] ? 1 : -1
-      })
     }
 
     const a = {
@@ -141,23 +156,17 @@ export default function Page() {
     };
     return a;
   }
-  useEffect(() => {
-    // fetchData(1, fetchSize);
-    // fetchNextPage();
-    return () => {};
-  }, []);
 
   const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery({
     queryKey: [
       "product",
       sorting, //refetch when sorting changes
     ],
-    queryFn: async ({ pageParam = 1 }) => {
-      const start = pageParam as number;
-      const fetchedData = await fetchData(start, fetchSize,sorting); //pretend api call
+    queryFn: async ({ pageParam }) => {
+      const fetchedData = await fetchData(pageParam+1, fetchSize,sorting); //pretend api call
       return fetchedData;
     },
-    initialPageParam: 1,
+    initialPageParam: 0,
     getNextPageParam: (_lastGroup, groups) => groups.length,
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
@@ -198,10 +207,13 @@ export default function Page() {
     columns,
     state: {
       sorting,
+      columnFilters,
     },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    manualSorting: false,
+    manualSorting: true,
     debugTable: true,
   });
 
@@ -238,13 +250,15 @@ export default function Page() {
     return <>Loading...</>;
   }
 
+
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
         Barang
       </h1>
       <div className="w-full">
-        ({flatData.length} of {totalDBRowCount} rows fetched)
+        {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
+        <Filter column={table.getColumn("product")}/>
         <div
           className="w-full"
           onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
