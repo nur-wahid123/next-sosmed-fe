@@ -1,5 +1,5 @@
 "use client";
-import {Filter} from "@/utils/util-table"
+import { Filter, TanstackTable } from "@/utils/util-table"
 import {
   Table,
   TableBody,
@@ -34,16 +34,8 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 
 import useDebounce from "@/hooks/useDebounce";
 import AddProduct from "@/components/product/add-product.components";
-export class Product {
-  id?: number = 0;
-  name?: string = "";
-  code?: string = "";
-  sellPrice?: number = 0;
-  brand?: {name: string} = {name: ""};
-  category?: { name: string } = { name: "" };
-  uom?: { name: string } = { name: "" };
-  inventory?: { qty: number } = { qty: 0 };
-}
+import { Product } from "@/type/product";
+
 export class Category {
   name?: string = "";
   id?: number = 0;
@@ -56,7 +48,7 @@ function productFilterFn<TData, TValue>(
   columnId: string,
   value: TValue
 ) {
-  const { name,code } = row.getValue<{ name: string,code:string }>(columnId);
+  const { name, code } = row.getValue<{ name: string, code: string }>(columnId);
   return name.toLowerCase().includes((value as string).toLowerCase()) || code.toLowerCase().includes((value as string).toLowerCase());
 }
 
@@ -64,7 +56,7 @@ function productFilterFn<TData, TValue>(
 export default function Page() {
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const columns = React.useMemo<ColumnDef<Product, any>[]>(
+  const columns = React.useMemo<ColumnDef<any, any>[]>(
     () => [
       {
         accessorKey: "product",
@@ -102,7 +94,7 @@ export default function Page() {
       {
         accessorKey: "brands",
         header: "Merek",
-        cell: (info) =>{
+        cell: (info) => {
           return info.getValue();
         },
         accessorFn: (row) => row.brand?.name as string,
@@ -122,51 +114,28 @@ export default function Page() {
     start: number,
     limit: number,
     sorting: SortingState
-  ): Promise<{ data: Product[]; meta: { itemCount: number } }> {
-    const p: Product[] = [];
-    let itemCount = 0;
+  ) {
 
     try {
       const res = await axiosInstance.get(
         `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}&search=${search}`
       );
 
-      if (Array.isArray(res.data.data)) {
-        res.data.data.forEach((data: any) => {
-          p.push(
-            mapResponseToClass(data, Product, {
-              name: "name",
-            })
-          );
-        });
-      }
-      if (res.data.pagination.itemCount) {
-        itemCount = res.data.pagination.itemCount ?? 0;
+      if (res.data) {
+        return res.data;
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching :", error);
     }
-    if (sorting.length) {
-      const sort = sorting[0] as ColumnSort
-      const { id, desc } = sort as { id: keyof Product; desc: boolean }
-    }
-
-    const a = {
-      data: p,
-      meta: {
-        itemCount,
-      },
-    };
-    return a;
   }
 
-  const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage , isFetching, isLoading } = useInfiniteQuery({
     queryKey: [
       "product",
       sorting, //refetch when sorting changes
     ],
     queryFn: async ({ pageParam }) => {
-      const fetchedData = await fetchData(pageParam+1, fetchSize,sorting); //pretend api call
+      const fetchedData = await fetchData(pageParam + 1, fetchSize, sorting); //pretend api call
       return fetchedData;
     },
     initialPageParam: 0,
@@ -177,11 +146,10 @@ export default function Page() {
 
   //flatten the array of arrays from the useInfiniteQuery hook
   const flatData = React.useMemo(
-    () => data?.pages?.flatMap((page) => page.data) ?? [],
+    () => data?.pages?.flatMap((page) => page?.data) ?? [],
     [data]
   );
-  const totalDBRowCount = data?.pages?.[0]?.meta?.itemCount ?? 0;
-  const totalFetched = flatData.length;
+
 
   //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
   const fetchMoreOnBottomReached = React.useCallback(
@@ -191,13 +159,13 @@ export default function Page() {
         if (
           scrollHeight - scrollTop - clientHeight < 400 &&
           !isFetching &&
-          totalFetched < totalDBRowCount
+          hasNextPage
         ) {
           fetchNextPage();
         }
       }
     },
-    [fetchNextPage, isFetching, totalFetched, totalDBRowCount]
+    [isFetching, hasNextPage, fetchNextPage]
   );
 
   //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
@@ -243,7 +211,7 @@ export default function Page() {
     //measure dynamic row height, except in firefox because it measures table border height incorrectly
     measureElement:
       typeof window !== "undefined" &&
-      navigator.userAgent.indexOf("Firefox") === -1
+        navigator.userAgent.indexOf("Firefox") === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
     overscan: 5,
@@ -259,11 +227,14 @@ export default function Page() {
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
         Barang
       </h1>
+          <Filter column={table.getColumn("product")} />
+          <AddProduct />
+      <TanstackTable columns={columns} infiniteScroll={{ fetchNextPage: fetchNextPage,isFetching,hasNextPage }} data={flatData} fetchSize={fetchSize}>
+
+      </TanstackTable>
       <div className="w-full flex flex-col gap-4">
         {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
         <div className="flex gap-6 items-center justify-between">
-        <Filter column={table.getColumn("product")}/>
-        <AddProduct/>
         </div>
         <div
           className="w-full"
@@ -272,7 +243,7 @@ export default function Page() {
           style={{
             overflow: "auto", //our scrollable table container
             position: "relative", //needed for sticky header
-            height: "600px", //should be a fixed height
+            height: "200px", //should be a fixed height
           }}
         >
           {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}

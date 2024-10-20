@@ -142,9 +142,9 @@ export default function PaymentDetail({
 
   function fetchData() {
     axiosInstance.get(API_ENDPOINT.SUPPLIER_LIST).then((res) => {
-      if (Array.isArray(res.data)) {
+      if (Array.isArray(res.data.data)) {
         const p: Supplier[] = [];
-        res.data.map((data) => {
+        res.data.data.map((data: any) => {
           p.push(
             mapResponseToClass(data, Supplier, {
               name: "name",

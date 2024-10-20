@@ -6,7 +6,7 @@ const API_ENDPOINT = {
     CATEGORY_LIST: `${CONFIG.BASE_URL}/categories`,
     CATEGORY_CASHEER: `${CONFIG.BASE_URL}/categories/cashier`,
     PRODUCT_LIST: `${CONFIG.BASE_URL}/products/all`,
-    SUPPLIER_LIST: `${CONFIG.BASE_URL}/suppliers`,
+    SUPPLIER_LIST: `${CONFIG.BASE_URL}/suppliers/list`,
     CREATE_SALE: `${CONFIG.BASE_URL}/sales/create`,
     CREATE_PURCHASE: `${CONFIG.BASE_URL}/purchases/create`,
     GET_PURCHASE: `${CONFIG.BASE_URL}/purchases/list`,

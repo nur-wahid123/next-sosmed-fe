@@ -36,8 +36,8 @@ const sidebarMenu = [
         icon: Database,
       },
       {
-        title: "User",
-        href: "/dashboard/master/user",
+        title: "Supplier",
+        href: "/dashboard/master/supplier",
         icon: Database,
       },
     ],
