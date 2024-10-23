@@ -28,7 +28,7 @@ export default function SearchBar({
             type="text"
             placeholder="Search"
             className="rounded-lg appearance-none w-48 pl-8 text-xs"
-            onChange={handleChange}
+            onChange={(e)=>{handleChange(e)}}
             value={query}
           />
           <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400 dark:text-gray-600" />

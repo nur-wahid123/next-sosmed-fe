@@ -24,9 +24,9 @@ export default function CategoryBox({
         <button
           key={category.id}
           className={
-            selectedCategory === category.id
-              ? "p-2  rounded-md bg-slate-200"
-              : "p-2  rounded-md bg-slate-100"
+            `${selectedCategory === category.id
+              ? "p-2  rounded-md bg-slate-100"
+              : "p-2  rounded-md "} shadow hover:shadow-inner border border-slate-200`
           }
           onClick={() => setSelectedCategory(category.id)} // Select one category at a time
         >

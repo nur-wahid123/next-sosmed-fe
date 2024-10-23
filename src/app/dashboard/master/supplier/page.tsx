@@ -32,9 +32,10 @@ import {
 } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
-import useDebounce from "@/hooks/useDebounce";
 import AddProduct from "@/components/product/add-product.components";
-import { Product } from "@/type/product";
+import { Product } from "@/types/product";
+import SearchBar from "@/components/search-bar";
+import useDebounce from "@/hooks/useDebounce";
 
 export class Category {
   name?: string = "";
@@ -54,8 +55,9 @@ function productFilterFn<TData, TValue>(
 
 
 export default function Page() {
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [search, setSearch] = useState("");
+  const debounce = useDebounce(search, 500);
   const columns = React.useMemo<ColumnDef<any, any>[]>(
     () => [
       {
@@ -102,13 +104,6 @@ export default function Page() {
     ],
     []
   );
-  const [search, setSearch] = useState("");
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const debounceFunc = useDebounce(search, 500);
 
   async function fetchData(
     start: number,
@@ -129,9 +124,11 @@ export default function Page() {
     }
   }
 
-  const { data, fetchNextPage, hasNextPage , isFetching, isLoading } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetching, isLoading } = useInfiniteQuery({
     queryKey: [
       "product",
+      "search",
+      search,
       sorting, //refetch when sorting changes
     ],
     queryFn: async ({ pageParam }) => {
@@ -150,195 +147,28 @@ export default function Page() {
     [data]
   );
 
-
-  //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        if (
-          scrollHeight - scrollTop - clientHeight < 400 &&
-          !isFetching &&
-          hasNextPage
-        ) {
-          fetchNextPage();
-        }
-      }
-    },
-    [isFetching, hasNextPage, fetchNextPage]
-  );
-
-  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current);
-  }, [fetchMoreOnBottomReached]);
-
-  const table = useReactTable({
-    data: flatData,
-    columns,
-    state: {
-      sorting,
-      columnFilters,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    debugTable: true,
-  });
-
-  //scroll to top of table when sorting changes
-  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
-    setSorting(updater);
-    if (!!table.getRowModel().rows.length) {
-      rowVirtualizer.scrollToIndex?.(0);
-    }
-  };
-
-  //since this table option is derived from table row model state, we're using the table.setOptions utility
-  table.setOptions((prev) => ({
-    ...prev,
-    onSortingChange: handleSortingChange,
-  }));
-
-  const { rows } = table.getRowModel();
-
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    estimateSize: () => 33, //estimate row height for accurate scrollbar dragging
-    getScrollElement: () => tableContainerRef.current,
-    //measure dynamic row height, except in firefox because it measures table border height incorrectly
-    measureElement:
-      typeof window !== "undefined" &&
-        navigator.userAgent.indexOf("Firefox") === -1
-        ? (element) => element?.getBoundingClientRect().height
-        : undefined,
-    overscan: 5,
-  });
-
   if (isLoading) {
     return <>Loading...</>;
   }
 
 
+  function handleSearch(search:string){
+    setSearch(search);
+  }
+  
+
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
-        Barang
+        Supplier
       </h1>
-          <Filter column={table.getColumn("product")} />
-          <AddProduct />
-      <TanstackTable columns={columns} infiniteScroll={{ fetchNextPage: fetchNextPage,isFetching,hasNextPage }} data={flatData} fetchSize={fetchSize}>
-
-      </TanstackTable>
-      <div className="w-full flex flex-col gap-4">
-        {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
-        <div className="flex gap-6 items-center justify-between">
-        </div>
-        <div
-          className="w-full"
-          onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-          ref={tableContainerRef}
-          style={{
-            overflow: "auto", //our scrollable table container
-            position: "relative", //needed for sticky header
-            height: "200px", //should be a fixed height
-          }}
-        >
-          {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
-          <Table style={{ display: "grid" }}>
-            <TableHeader
-              style={{
-                display: "grid",
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-                width: "100%",
-              }}
-            >
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                  style={{ display: "flex", width: "100%" }}
-                >
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        style={{
-                          display: "flex",
-                          width: "100%",
-                        }}
-                      >
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? "cursor-pointer select-none"
-                              : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody
-              style={{
-                display: "grid",
-                height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-                position: "relative", //needed for absolute positioning of rows
-              }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const row = rows[virtualRow.index] as Row<Product>;
-                return (
-                  <TableRow
-                    data-index={virtualRow.index} //needed for dynamic row height measurement
-                    ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
-                    key={row.id}
-                    style={{
-                      display: "flex",
-                      position: "absolute",
-                      transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
-                      width: "100%",
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <TableCell
-                          key={cell.id}
-                          style={{
-                            display: "flex",
-                            width: "100%",
-                          }}
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-        {isFetching && <div>Fetching More...</div>}
+      <div className="flex w-full justify-between mb-6">
+      {/* <Filter column={table.getColumn("product")} /> */}
+      <SearchBar onSearch={handleSearch}/>
+      <AddProduct />
       </div>
+      <TanstackTable columns={columns} infiniteScroll={{ fetchNextPage: fetchNextPage, isFetching, hasNextPage }} data={flatData} fetchSize={fetchSize}>
+      </TanstackTable>
     </div>
   );
 }

@@ -39,7 +39,7 @@ export default function POSPage() {
       });
   };
   useEffect(() => {
-    fetchCategoriesData();
+    fetchCategoriesData('');
   }, []);
 
   const handleSearch = useCallback(async (query: string) => {

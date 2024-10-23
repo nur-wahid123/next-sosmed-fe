@@ -40,20 +40,11 @@ export default function PurchaseItemsTable({
   const [open, setOpen] = useState(false);
   function fetchData(search?: string) {
     const url = search
-      ? `${API_ENDPOINT.PRODUCT_LIST}?search=${search}`
-      : `${API_ENDPOINT.PRODUCT_LIST}`;
+      ? `${API_ENDPOINT.PRODUCT_LIST}?search=${search}&page=1&take=20`
+      : `${API_ENDPOINT.PRODUCT_LIST}?page=1&take=20`;
     axiosInstance.get(url).then((res) => {
       if (Array.isArray(res.data.data)) {
-        const p: Product[] = [];
-        res.data.data.map((data: any) => {
-          p.push(
-            mapResponseToClass(data, Product, {
-              name: "name",
-            })
-          );
-        });
-
-        setProducts(p);
+        setProducts(res.data.data);
       }
     });
   }

@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Table as Tbl, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { Column, ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, Row, RowData, SortingState, Table, useReactTable } from "@tanstack/react-table";
+import { Column, ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, OnChangeFn, Row, RowData, SortingState, Table, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { XCircle, Search } from "lucide-react";
 import React from "react";
@@ -31,7 +31,7 @@ export type TPorps<T extends object> = {
   }
 }
 
-export function TanstackTable<T extends object>({ children,columns, data, infiniteScroll }:TPorps<T>) {
+export function TanstackTable<T extends object>({ children, columns, data, infiniteScroll }: TPorps<T>) {
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -83,6 +83,18 @@ export function TanstackTable<T extends object>({ children,columns, data, infini
         : undefined,
     overscan: 5,
   });
+
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    setSorting(updater);
+    if (!!table.getRowModel().rows.length) {
+      rowVirtualizer.scrollToIndex?.(0);
+    }
+  };
+
+  table.setOptions((prev) => ({
+    ...prev,
+    onSortingChange: handleSortingChange,
+  }));
 
   return (
     <div
@@ -179,6 +191,7 @@ export function TanstackTable<T extends object>({ children,columns, data, infini
                     </TableCell>
                   );
                 })}
+                {children}
               </TableRow>
             );
           })}
