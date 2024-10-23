@@ -43,12 +43,9 @@ import { Check, ChevronsUpDown, Loader, Save } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
 import { mapResponseToClass } from "@/utils/util";
+import { Supplier } from "@/types/supplier";
 
-export class Supplier {
-  name?: string = "";
-  code?: string = "";
-  id?: number = 0;
-}
+
 export default function PaymentDetail({
   carts,
   setPurchaseCode,
@@ -142,18 +139,8 @@ export default function PaymentDetail({
 
   function fetchData() {
     axiosInstance.get(API_ENDPOINT.SUPPLIER_LIST).then((res) => {
-      if (Array.isArray(res.data)) {
-        const p: Supplier[] = [];
-        res.data.map((data) => {
-          p.push(
-            mapResponseToClass(data, Supplier, {
-              name: "name",
-              code: "code",
-              id: "id",
-            })
-          );
-        });
-        setSupplier(res.data);
+      if (Array.isArray(res.data.data)) {
+        setSupplier(res.data.data);
       }
     });
   }

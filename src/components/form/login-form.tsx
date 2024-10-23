@@ -1,6 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Cookies from 'js-cookie'
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -46,9 +47,8 @@ export default function LoginForm() {
         password: data.password,
       });
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.data.access_token);
+        Cookies.set("token", response.data.data.access_token,{expires:1});
       }
-      // console.log(response);
       router.push("/dashboard");
     } catch (error) {
       loginForm.setError("password", {

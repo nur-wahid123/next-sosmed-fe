@@ -11,12 +11,9 @@ import {
 } from "../ui/table";
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
+import { Sale } from "@/types/sale";
 
-class Sale {
-  code!: string;
-  paymentStatus!: string;
-  date!: Date;
-}
+
 
 export default function SaleSearch({
   setOpen,
@@ -73,8 +70,8 @@ export default function SaleSearch({
               key={i}
             >
               <TableCell>{sale.code}</TableCell>
-              <TableCell>{new Date(sale.date).toDateString()}</TableCell>
-              <TableCell>{sale.paymentStatus.toUpperCase()}</TableCell>
+              <TableCell>{new Date(String(sale?.date)).toDateString()}</TableCell>
+              <TableCell>{sale.paymentStatus?.toUpperCase()}</TableCell>
             </TableRow>
           ))}
         </TableBody>

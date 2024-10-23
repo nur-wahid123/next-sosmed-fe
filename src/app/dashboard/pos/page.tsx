@@ -20,10 +20,7 @@ export default function POSPage() {
   const [tab, setTab] = useState<"sale" | "payment">("sale");
 
   const fetchCategoriesData = async (search?: string) => {
-    const url =
-      search && search != ""
-        ? `${API_ENDPOINT.CATEGORY_CASHEER}?search=${search}`
-        : `${API_ENDPOINT.CATEGORY_CASHEER}`;
+    const url = `${API_ENDPOINT.CATEGORY_CASHEER}?search=${search}`
     await axiosInstance
       .get(url)
       .then((res) => {
@@ -42,7 +39,7 @@ export default function POSPage() {
       });
   };
   useEffect(() => {
-    fetchCategoriesData();
+    fetchCategoriesData('');
   }, []);
 
   const handleSearch = useCallback(async (query: string) => {
@@ -55,11 +52,11 @@ export default function POSPage() {
       setProducts(res.data.data);
     });
   }, []);
-
+  
   const handleSelectedCategory = useCallback(async (category: number) => {
     await axiosInstance
-      .get(`${API_ENDPOINT.PRODUCT_LIST}?category_id=${category}`)
-      .then((res) => {
+    .get(`${API_ENDPOINT.PRODUCT_LIST}?category_id=${category}`)
+    .then((res) => {
         setProducts(res.data.data);
       });
   }, []);
