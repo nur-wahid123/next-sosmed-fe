@@ -7,18 +7,6 @@ import PurchaseItemsTable, {
 import PaymentDetail from "@/components/pos/payment-detail";
 import PaymentPurchase from "@/components/pos/payment-purchase";
 
-export class PurchaseItem {
-  id!: number;
-  productName!: string;
-  max_qty?: number = 0;
-  uom?: {
-    name: string;
-  } = { name: "" };
-  category?: string = "";
-  quantity?: number = 0;
-  price?: number = 0;
-  total?: number = 0;
-}
 
 export default function PurchasePage() {
   const [carts, setCart] = useState<CartItem[]>();
