@@ -48,7 +48,7 @@ export default function ProductsContainer({ products }: { products: Item[] }) {
             return (
               <div
                 key={product.id}
-                className="p-2 pt-0 h-28 w-full flex flex-col justify-between rounded-md bg-slate-100"
+                className="p-2 pt-0 h-28 w-full flex flex-col justify-between rounded-md shadow hover:shadow-inner border border-slate-200"
               >
                 <button
                   className="text-left h-2/3"

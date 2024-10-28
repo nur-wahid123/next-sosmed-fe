@@ -24,20 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Product } from "@/types/product";
+import EditProduct from "@/components/product/edit-product.component";
 
-export class Product {
-  id?: number = 0;
-  name?: string = "";
-  code?: string = "";
-  sellPrice?: number = 0;
-  brand?: { name: string } = { name: "" };
-  category?: { name: string } = { name: "" };
-  uom?: { name: string } = { name: "" };
-  inventory?: { qty: number } = { qty: 0 };
-}
-export class Category {
-  name?: string = "";
-  id?: number = 0;
+export interface Category {
+  name?: string;
+  id?: number;
+  code?: string;
 }
 
 
@@ -71,10 +64,8 @@ export default function Page() {
   }, [fetchData, pagination?.page, pagination?.take, search]);
 
   function handleSearch(query: string) {
-    if (query.length > 0 && pagination.page !== 1) {
-      setPagination({ ...pagination, page: 1 });
-    }
     if (query !== search) {
+      setPagination({...pagination,page:1})
       setSearch(query);
     }
   }
@@ -114,13 +105,15 @@ export default function Page() {
         >
           {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-slate-100 text-black">
               <TableRow>
                 <TableHead>No.</TableHead>
                 <TableHead>Produk</TableHead>
-                <TableHead>Harga</TableHead>
+                <TableHead>Harga Beli</TableHead>
+                <TableHead>Harga Jual</TableHead>
                 <TableHead>Kategori</TableHead>
                 <TableHead>Merek</TableHead>
+                <TableHead>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -128,9 +121,13 @@ export default function Page() {
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{product.name}</TableCell>
+                  <TableCell>{formatPrice(product?.buyPrice ?? 0)}</TableCell>
                   <TableCell>{formatPrice(product?.sellPrice ?? 0)}</TableCell>
                   <TableCell>{toTitleCase(product.category?.name ?? "")}</TableCell>
                   <TableCell>{toTitleCase(product.brand?.name ?? "")}</TableCell>
+                  <TableCell>
+                    <EditProduct fetchProductData={fetchData} take={pagination?.take??20} product={product} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

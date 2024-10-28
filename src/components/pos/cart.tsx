@@ -135,7 +135,7 @@ export default function Cart({
                 <p>{item.name}</p>
                 <p className="text-sm text-slate-500">x{item.quantity}</p>
               </div>
-              <p>Rp.{formatPrice(item.sellPrice * item.quantity)}</p>
+              <p>{formatPrice(item.sellPrice * item.quantity)}</p>
             </li>
           ))}
         </ul>
@@ -146,7 +146,7 @@ export default function Cart({
           <div className="flex flex-col gap-4">
             <div className="flex justify-between">
               <p>SubTotal</p>
-              <p>Rp.{formatPrice(subTotal)}</p>
+              <p>{formatPrice(subTotal)}</p>
             </div>
             <div className="flex justify-between">
               <p>Discount</p>
@@ -155,7 +155,7 @@ export default function Cart({
             <div className="border-b-2 border-dashed border-black" />
             <div className="flex justify-between text-lg font-bold">
               <p>Total</p>
-              <p>Rp.{formatPrice(subTotal)}</p>
+              <p>{formatPrice(subTotal)}</p>
             </div>
           </div>
         ) : (

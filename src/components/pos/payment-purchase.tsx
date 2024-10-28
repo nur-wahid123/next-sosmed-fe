@@ -109,6 +109,9 @@ export default function PaymentPurchase({
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(e.target.value ==='0'){
+      e.target.value = '';
+  }
     // Remove non-numeric characters before updating the state
     const numericValue = e.target.value.replace(/\D/g, "");
     setPay(Number(numericValue));
@@ -215,7 +218,7 @@ export default function PaymentPurchase({
             </div>
           </div>
         </div>
-        <div className="w-1/3 h-full gap-10 flex flex-col justify-between rounded-lg p-3 border-[2px] shadow-lg border-black">
+        <div className="w-1/3 h-full gap-10 flex flex-col justify-between rounded-lg p-3 border-[2px] shadow-lg border-slate-200">
           <div>
             <div className="flex justify-between">
               <div className="font-bold text-xl">Subtotal</div>

@@ -1,41 +1,40 @@
-"use client";
-
+import { Product } from "@/types/product";
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
-import { CheckIcon, Package2Icon, PlusIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { CaretSortIcon } from "@radix-ui/react-icons"
-import axiosInstance from "@/utils/axios-util";
-import API_ENDPOINT from "../../../config/endpoint";
-import { Label } from "../ui/label";
-import { Category } from "@/app/dashboard/master/barang/page";
 import { Button } from "../ui/button";
-import { toTitleCase } from "@/utils/util";
-import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import { CheckIcon, Edit, LucideEdit3 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Category } from "@/app/dashboard/master/(barang2)/page";
 import { Brand } from "@/types/brand";
 import { Uom } from "@/types/uom";
-import { useToast } from "@/hooks/use-toast";
+import { toTitleCase } from "@/utils/util";
+import { cn } from "@/lib/utils";
+import { Input } from "../ui/input";
+import axiosInstance from "@/utils/axios-util";
+import API_ENDPOINT from "../../../config/endpoint";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
-export default function AddProduct() {
-    const [openAddProduct, setOpenAddProduct] = React.useState(false);
+export default function EditProduct({ product, fetchProductData, take }: { take: number, product: Product, fetchProductData: (start: number, limit: number) => void }) {
+    const [openEditProduct, setOpenEditProduct] = React.useState(false);
     const [open, setOpen] = React.useState({ categories: false, brands: false, uoms: false })
-    const toast = useToast()
     const [value, setValue] = React.useState({
-        category_id: 0,
-        brand_id: 0,
-        uom_id: 0,
-        buy_price: 0,
-        sell_price: 0,
-        name: "",
-        code: "",
+        category_id: product.category?.id,
+        brand_id: product.brand?.id,
+        uom_id: product.uom?.id,
+        code: product.code,
+        name: product.name,
+        sell_price: product.sellPrice ?? 0,
+        buy_price: product.buyPrice ?? 0,
     })
-    const [constantData, setConstantData] = React.useState<{
-        categories: Category[];
-        brands: Brand[];
-        uoms: Uom[]
-    }>({ categories: [], brands: [], uoms: [] });
+    const [constantData, setConstantData] = React.useState({
+        categories: [] as Category[],
+        brands: [] as Brand[],
+        uoms: [] as Uom[],
+    })
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, name: 'sell_price' | 'buy_price') => {
         // Remove non-numeric characters before updating the state
         if (e.target.value === '0') {
@@ -44,7 +43,6 @@ export default function AddProduct() {
         const numericValue = e.target.value.replace(/\D/g, "");
         setValue({ ...value, [name]: Number(numericValue) });
     };
-
     const fetchData = React.useCallback(async () => {
         try {
             // Fetch categories
@@ -80,45 +78,39 @@ export default function AddProduct() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    const toast = useToast();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        await axiosInstance.post(API_ENDPOINT.ADD_PRODUCT, value)
+        e.preventDefault()
+        await axiosInstance.patch(`${API_ENDPOINT.UPDATE_PRODUCT}/${product.id}`, value)
             .then((res) => {
-                fetchData();
                 toast.toast({
                     title: "Success",
-                    description: "Successfully added product",
+                    description: "Successfully updated product",
                     variant: "default",
-                })
-                setOpenAddProduct(false);
-                setValue({
-                    category_id: 0,
-                    brand_id: 0,
-                    uom_id: 0,
-                    buy_price: 0,
-                    sell_price: 0,
-                    name: "",
-                    code: "",
-                })
+                });
+                fetchProductData(1, take);
+                setOpenEditProduct(false);
             })
-            .catch((error) => {
-                toast.toast({
-                    title: "Error",
-                    description: error.response.data.message[0],
-                    variant: "destructive",
-                })
-            })
-    };
-
+    }
     return (
-        <Dialog open={openAddProduct} onOpenChange={setOpenAddProduct}>
+        <Dialog open={openEditProduct} onOpenChange={setOpenEditProduct}>
             <DialogTrigger asChild>
-                <Button className="flex gap-3 shadow hover:shadow-md" variant="outline"><Package2Icon className="w-4" />Tambah Produk <PlusIcon className="w-4" /></Button>
+                <div>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <button><Edit className="w-4"></Edit></button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Edit {product?.name?.split(" ")[0] ??"Produk"}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Tambah Produk</DialogTitle>
+                    <DialogTitle>Edit Produk</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="flex flex-wrap gap-4">
@@ -305,10 +297,9 @@ export default function AddProduct() {
                         onChange={(e) => setValue({ ...value, code: e.target.value })}
                     />
                     <Button type="submit">
-                        Tambah Produk
+                        Edit Produk <LucideEdit3></LucideEdit3>
                     </Button>
                 </form>
             </DialogContent>
-        </Dialog>
-    );
+        </Dialog>)
 }
