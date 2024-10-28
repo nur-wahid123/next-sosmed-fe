@@ -8,7 +8,6 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { CheckIcon, Edit, LucideEdit3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Category } from "@/app/dashboard/master/(barang2)/page";
 import { Brand } from "@/types/brand";
 import { Uom } from "@/types/uom";
 import { toTitleCase } from "@/utils/util";
@@ -17,6 +16,7 @@ import { Input } from "../ui/input";
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { Category } from "@/types/category";
 
 export default function EditProduct({ product, fetchProductData, take }: { take: number, product: Product, fetchProductData: (start: number, limit: number) => void }) {
     const [openEditProduct, setOpenEditProduct] = React.useState(false);

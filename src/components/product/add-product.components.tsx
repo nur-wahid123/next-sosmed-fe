@@ -10,13 +10,13 @@ import { CaretSortIcon } from "@radix-ui/react-icons"
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
 import { Label } from "../ui/label";
-import { Category } from "@/app/dashboard/master/barang/page";
 import { Button } from "../ui/button";
 import { toTitleCase } from "@/utils/util";
 import { Input } from "../ui/input";
 import { Brand } from "@/types/brand";
 import { Uom } from "@/types/uom";
 import { useToast } from "@/hooks/use-toast";
+import { Category } from "@/types/category";
 
 export default function AddProduct() {
     const [openAddProduct, setOpenAddProduct] = React.useState(false);

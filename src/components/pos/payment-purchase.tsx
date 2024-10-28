@@ -27,13 +27,14 @@ import { useToast } from "@/hooks/use-toast";
 import PurchaseSearch from "./search-sale copy";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
+import { Purchase } from "@/types/purchase";
 
 export default function PaymentPurchase({
   purchase_code,
 }: {
   purchase_code?: string;
 }) {
-  const [purchase, setPurchase] = React.useState<any>();
+  const [purchase, setPurchase] = React.useState<Purchase>();
   const [open, setOpen] = React.useState(false);
   const [isFullPaid, setIsFullPaid] = React.useState(false);
   const [needToPay, setNeedToPay] = React.useState<{
@@ -53,6 +54,7 @@ export default function PaymentPurchase({
       });
     }
     return () => {};
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -79,6 +81,7 @@ export default function PaymentPurchase({
           });
         });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchase]);
 
   function handlePay() {
@@ -123,6 +126,7 @@ export default function PaymentPurchase({
     } else {
       setPay(0);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFullPaid]);
 
   return (
@@ -199,7 +203,6 @@ export default function PaymentPurchase({
                 </TableHeader>
                 <TableBody>
                   {purchase &&
-                    Array.isArray(purchase.payments) &&
                     purchase.payments.length > 0 &&
                     purchase.payments.map((data: any, i: number) => (
                       <TableRow key={i}>

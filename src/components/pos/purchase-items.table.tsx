@@ -16,14 +16,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Package2, Plus, Trash2, TrashIcon } from "lucide-react";
+import { Package2, Plus, Trash2} from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Product } from "@/app/dashboard/master/barang/page";
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
-import { mapResponseToClass } from "@/utils/util";
 import { formatPrice } from "@/utils/currency.util";
 import { Input } from "../ui/input";
+import { Product } from "@/types/product";
 
 export class CartItem {
   product: Product | undefined;

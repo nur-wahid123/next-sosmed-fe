@@ -27,12 +27,6 @@ import {
 import { Product } from "@/types/product";
 import EditProduct from "@/components/product/edit-product.component";
 
-export interface Category {
-  name?: string;
-  id?: number;
-  code?: string;
-}
-
 
 export default function Page() {
   const [search, setSearch] = useState("");

@@ -1,5 +1,5 @@
 "use client";
-import { Filter, TanstackTable } from "@/utils/util-table"
+
 import {
   Table,
   TableBody,
@@ -11,164 +11,117 @@ import {
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../../../config/endpoint";
 import React, { useEffect, useState } from "react";
-import { mapResponseToClass, toTitleCase } from "@/utils/util";
+import { toTitleCase } from "@/utils/util";
 import { formatPrice } from "@/utils/currency.util";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  ColumnSort,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  OnChangeFn,
-  Row,
-  SortingState,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  keepPreviousData,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { useVirtualizer } from "@tanstack/react-virtual";
-
-import AddProduct from "@/components/product/add-product.components";
-import { Product } from "@/types/product";
-import SearchBar from "@/components/search-bar";
 import useDebounce from "@/hooks/useDebounce";
-
-export class Category {
-  name?: string = "";
-  id?: number = 0;
-}
-
-const fetchSize = 20;
-
-function productFilterFn<TData, TValue>(
-  row: Row<TData>,
-  columnId: string,
-  value: TValue
-) {
-  const { name, code } = row.getValue<{ name: string, code: string }>(columnId);
-  return name.toLowerCase().includes((value as string).toLowerCase()) || code.toLowerCase().includes((value as string).toLowerCase());
-}
+import AddProduct from "@/components/product/add-product.components";
+import SearchBar from "@/components/search-bar";
+import PaginationSelf, { PaginateContentProps } from "@/components/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Product } from "@/types/product";
+import EditProduct from "@/components/product/edit-product.component";
+import { Supplier } from "@/types/supplier";
 
 
 export default function Page() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [search, setSearch] = useState("");
-  const debounce = useDebounce(search, 500);
-  const columns = React.useMemo<ColumnDef<any, any>[]>(
-    () => [
-      {
-        accessorKey: "product",
-        header: "Product",
-        accessorFn: (row) => ({
-          name: row.name,
-          code: row.code,
-        }),
-        filterFn: productFilterFn,
-        cell: (info) => {
-          const { name, code } = info.getValue();
-          return (
-            <div>
-              <div className="font-light text-slate-700">{code}</div>
-              <div className="font-semibold">{name}</div>
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: "category",
-        header: "Category",
-        cell: (info) => info.getValue(),
-        accessorFn: (row) => toTitleCase(row.category?.name as string),
-      },
-      {
-        accessorKey: "sellPrice",
-        header: "Sell Price",
-        cell: (info) => {
-          const sellPrice = info.getValue();
-          return formatPrice(sellPrice);
-        },
-        accessorFn: (row) => row.sellPrice as number,
-      },
-      {
-        accessorKey: "brands",
-        header: "Merek",
-        cell: (info) => {
-          return info.getValue();
-        },
-        accessorFn: (row) => row.brand?.name as string,
-      }
-    ],
-    []
-  );
+  const [pagination, setPagination] = useState<PaginateContentProps>({});
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
 
-  async function fetchData(
+  const fetchData = React.useCallback(async (
     start: number,
     limit: number,
-    sorting: SortingState
-  ) {
-
+  ) => {
     try {
       const res = await axiosInstance.get(
-        `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}&search=${search}`
+        `${API_ENDPOINT.SUPPLIER_LIST}?page=${start}&take=${limit}&search=${search}`
       );
 
-      if (res.data) {
-        return res.data;
+      if (Array.isArray(res.data.data)) {
+        setSuppliers(res.data.data);
+      }
+      if (res.data.pagination) {
+        setPagination(res.data.pagination);
       }
     } catch (error) {
-      console.error("Error fetching :", error);
+      console.error("Error fetching products:", error);
     }
   }
+  , [search]);
+  useEffect(() => {
+    fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
+  }, [fetchData, pagination?.page, pagination?.take, search]);
 
-  const { data, fetchNextPage, hasNextPage, isFetching, isLoading } = useInfiniteQuery({
-    queryKey: [
-      "product",
-      "search",
-      search,
-      sorting, //refetch when sorting changes
-    ],
-    queryFn: async ({ pageParam }) => {
-      const fetchedData = await fetchData(pageParam + 1, fetchSize, sorting); //pretend api call
-      return fetchedData;
-    },
-    initialPageParam: 0,
-    getNextPageParam: (_lastGroup, groups) => groups.length,
-    refetchOnWindowFocus: false,
-    placeholderData: keepPreviousData,
-  });
-
-  //flatten the array of arrays from the useInfiniteQuery hook
-  const flatData = React.useMemo(
-    () => data?.pages?.flatMap((page) => page?.data) ?? [],
-    [data]
-  );
-
-  if (isLoading) {
-    return <>Loading...</>;
+  function handleSearch(query: string) {
+    if (query !== search) {
+      setPagination({...pagination,page:1})
+      setSearch(query);
+    }
   }
-
-
-  function handleSearch(search:string){
-    setSearch(search);
-  }
-  
 
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
-        Supplier
+        Barang
       </h1>
-      <div className="flex w-full justify-between mb-6">
-      {/* <Filter column={table.getColumn("product")} /> */}
-      <SearchBar onSearch={handleSearch}/>
-      <AddProduct />
+      <div className="w-full flex flex-col gap-4">
+        {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
+        <div className="flex gap-6 items-center justify-between">
+          <SearchBar onSearch={handleSearch} />
+          <AddProduct />
+          <div className="flex gap-4 items-center">
+            <p>Rows</p>
+            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e),page:1 })}>
+              <SelectTrigger className="w-[90px]">
+                <SelectValue placeholder="Rows" />
+              </SelectTrigger>
+              <SelectContent>
+                {[10,20,30,40,50].map((item) => (
+                  <SelectItem key={item} value={item.toString()}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <PaginationSelf pagination={pagination} fetchData={fetchData} />
+        </div>
+        <div
+          className="w-full"
+          style={{
+            height: "600px", //should be a fixed height
+          }}
+        >
+          {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
+          <Table>
+            <TableHeader className="bg-slate-100 text-black">
+              <TableRow>
+                <TableHead>No.</TableHead>
+                <TableHead>Produk</TableHead>
+                <TableHead>Harga Beli</TableHead>
+                <TableHead>Harga Jual</TableHead>
+                <TableHead>Kategori</TableHead>
+                <TableHead>Merek</TableHead>
+                <TableHead>Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {suppliers.map((supplier, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{supplier.name}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-      <TanstackTable columns={columns} infiniteScroll={{ fetchNextPage: fetchNextPage, isFetching, hasNextPage }} data={flatData} fetchSize={fetchSize}>
-      </TanstackTable>
     </div>
   );
 }
