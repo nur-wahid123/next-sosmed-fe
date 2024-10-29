@@ -61,7 +61,7 @@ export default function LoginForm() {
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Login Form</CardTitle>
+        <CardTitle>Logan Form</CardTitle>
         <CardDescription>Welcome Back, please login first</CardDescription>
       </CardHeader>
       <CardContent>
