@@ -20,13 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Supplier } from "@/types/supplier";
+import { Purchase } from "@/types/purchase";
+import { formatPrice } from "@/utils/currency.util";
+import { PaymentStatus } from "@/enums/payment-status.enum";
+import { Badge } from "@/components/ui/badge";
 
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState<PaginateContentProps>({});
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
 
   const fetchData = React.useCallback(async (
     start: number,
@@ -34,11 +37,11 @@ export default function Page() {
   ) => {
     try {
       const res = await axiosInstance.get(
-        `${API_ENDPOINT.SUPPLIER_LIST}?page=${start}&take=${limit}&search=${search}`
+        `${API_ENDPOINT.GET_PURCHASE}?page=${start}&take=${limit}&search=${search}`
       );
 
       if (Array.isArray(res.data.data)) {
-        setSuppliers(res.data.data);
+        setPurchases(res.data.data);
       }
       if (res.data.pagination) {
         setPagination(res.data.pagination);
@@ -62,7 +65,7 @@ export default function Page() {
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
-        Supplier
+        Pembelian
       </h1>
       <div className="w-full flex flex-col gap-4">
         {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
@@ -95,15 +98,28 @@ export default function Page() {
           <Table>
             <TableHeader className="bg-slate-100 text-black">
               <TableRow>
-                <TableHead>No.</TableHead>
-                <TableHead>Nama Supplier</TableHead>
+                <TableHead>Kode</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Status Pembayaran</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {suppliers.map((supplier, index) => (
+              {purchases.map((purchase, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{supplier.name}</TableCell>
+                  <TableCell>{purchase.code}</TableCell>
+                  <TableCell>{formatPrice(purchase.total)}</TableCell>
+                  <TableCell>
+                    {(() => {
+                      switch (purchase.paymentStatus) {
+                        case PaymentStatus.PAID:
+                          return <Badge variant={"default"} >Lunas</Badge>;
+                        case PaymentStatus.PARTIALPAID:
+                          return <Badge variant={"secondary"} >Sebagian Lunas</Badge>;
+                        case PaymentStatus.UNPAID:
+                          return <Badge variant={"destructive"} >Belum Dibayar</Badge>;
+                      }
+                    })()}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

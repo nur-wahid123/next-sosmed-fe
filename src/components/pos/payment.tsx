@@ -42,8 +42,8 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
     if (sale_code) {
       const url = `${API_ENDPOINT.GET_SALE}?sale_code=${sale_code}`;
       axiosInstance.get(url).then((res) => {
-        if (Array.isArray(res.data)) {
-          setSale(res.data[0]);
+        if (Array.isArray(res.data.data)) {
+          setSale(res.data.data[0]);
         }
       });
     }
@@ -72,7 +72,8 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
           });
         });
     }
-  }, [sale, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sale]);
 
   function handlePay() {
     if (sale) {
@@ -86,8 +87,8 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
           setPay(0);
           const url = `${API_ENDPOINT.GET_SALE}?sale_code=${sale.code}`;
           axiosInstance.get(url).then((res) => {
-            if (Array.isArray(res.data)) {
-              setSale(res.data[0]);
+            if (Array.isArray(res.data.data)) {
+              setSale(res.data.data[0]);
             }
           });
         })

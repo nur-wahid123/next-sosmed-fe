@@ -1,12 +1,8 @@
 "use client";
-import { AuthProvider, useAuth } from "@/components/auth/auth.provider";
 import Sidebar from "@/components/navigation/sidebar";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
-import UserButton from "@/components/user-btn";
-import { Database, File, Inbox, ScanBarcode, Send } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Database, File, Inbox, ScanBarcode,Monitor, Send, Landmark, WalletMinimal } from "lucide-react";
 import React from "react";
 
 const sidebarMenu = [
@@ -39,6 +35,23 @@ const sidebarMenu = [
         title: "Supplier",
         href: "/dashboard/master/supplier",
         icon: Database,
+      },
+    ],
+  },
+  {
+    title: "Transaction",
+    href: "/dashboard/transaction",
+    icon: Monitor,
+    submenu: [
+      {
+        title: "Pembelian",
+        href: "/dashboard/transaction/purchase",
+        icon: Landmark,
+      },
+      {
+        title: "Penjualan",
+        href: "/dashboard/transaction/sale",
+        icon: WalletMinimal,
       },
     ],
   },

@@ -29,8 +29,8 @@ export default function SaleSearch({
         ? `${API_ENDPOINT.GET_SALE}?search=${search}`
         : `${API_ENDPOINT.GET_SALE}`;
     axiosInstance.get(url).then((res) => {
-      if (Array.isArray(res.data)) {
-        setSaleData(res.data);
+      if (Array.isArray(res.data.data)) {
+        setSaleData(res.data.data);
       }
     });
   }

@@ -41,21 +41,20 @@ export default function LoginForm() {
   const router = useRouter();
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
-    try {
-      const response = await axios.post(API_ENDPOINT.URL_LOGIN, {
-        username: data.username,
-        password: data.password,
+    await axios.post(API_ENDPOINT.URL_LOGIN, {
+      username: data.username,
+      password: data.password,
+    })
+      .then((res) => {
+        Cookies.set("token", res.data.data.access_token, { expires: 1 });
+        router.push("/dashboard");
+      })
+      .catch(() => {
+        loginForm.setError("password", {
+          type: "custom",
+          message: "invalid credentials",
+        });
       });
-      if (response.status === 200) {
-        Cookies.set("token", response.data.data.access_token,{expires:1});
-      }
-      router.push("/dashboard");
-    } catch (error) {
-      loginForm.setError("password", {
-        type: "custom",
-        message: "invalid credentials",
-      });
-    }
   };
 
   return (
