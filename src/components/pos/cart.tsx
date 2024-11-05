@@ -25,7 +25,7 @@ export default function Cart({
   const [selectedItems, setSelectedItems] = useAtom(selectedItemsAtom);
   const toast = useToast();
   const subTotal = selectedItems.reduce(
-    (acc, item) => acc + item.sellPrice * item.quantity,
+    (acc, item) => acc + (item.sellPrice??0) * (item.quantity??0),
     0
   );
 
@@ -43,8 +43,8 @@ export default function Cart({
     createSaleDto.date = new Date();
     createSaleDto.sale_items = selectedItems.map((item) => {
       const createSaleItemDto: CreateSaleItemDto = new CreateSaleItemDto();
-      createSaleItemDto.product_id = item.id;
-      createSaleItemDto.qty = item.quantity;
+      createSaleItemDto.product_id = item.id??0;
+      createSaleItemDto.qty = item.quantity??0;
       createSaleItemDto.price = Number(item.sellPrice);
       return createSaleItemDto;
     });
@@ -68,9 +68,9 @@ export default function Cart({
   const handleAdd = (item: Item) => {
     setSelectedItems((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && exixtingItem.quantity < item.max_qty) {
+      if (exixtingItem && (exixtingItem.quantity??0) < (item.max_qty??0)) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity??0) + 1 } : i
         );
       } else if (!exixtingItem) {
         return [...prevItems, { ...item, quantity: 1 }];
@@ -83,9 +83,9 @@ export default function Cart({
   const handleReduce = (item: Item) => {
     setSelectedItems((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && exixtingItem.quantity > 1) {
+      if (exixtingItem && (exixtingItem.quantity??0) > 1) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity??0) - 1 } : i
         );
       } else {
         return prevItems.filter((i) => i.id !== item.id);
@@ -135,7 +135,7 @@ export default function Cart({
                 <p>{item.name}</p>
                 <p className="text-sm text-slate-500">x{item.quantity}</p>
               </div>
-              <p>{formatPrice(item.sellPrice * item.quantity)}</p>
+              <p>{formatPrice((item.sellPrice??0) * (item.quantity??0))}</p>
             </li>
           ))}
         </ul>
