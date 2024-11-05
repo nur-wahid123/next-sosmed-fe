@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import axiosInstance from "@/utils/axios-util";
-import API_ENDPOINT from "../../../../../config/endpoint";
+import API_ENDPOINT from "../../../config/endpoint";
 import React, { useEffect, useState } from "react";
 import SearchBar from "@/components/search-bar";
 import PaginationSelf, { PaginateContentProps } from "@/components/pagination";
