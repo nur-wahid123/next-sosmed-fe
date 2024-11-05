@@ -1,3 +1,5 @@
+import { ImageLoader } from "next/image";
+
 export function toTitleCase(text: string) {
   return text
     .toLowerCase()
@@ -5,6 +7,10 @@ export function toTitleCase(text: string) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
+
+export const myImageLoader: ImageLoader = ({ src, width, quality }) => {
+  return src;
+};
 
 export function mapResponseToClass<T extends object>(
   response: any,

@@ -6,17 +6,18 @@ import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
-import { CheckIcon, Edit, LucideEdit3 } from "lucide-react";
+import { CheckIcon, Edit, Loader, LucideEdit3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Brand } from "@/types/brand";
 import { Uom } from "@/types/uom";
-import { toTitleCase } from "@/utils/util";
+import { myImageLoader, toTitleCase } from "@/utils/util";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../config/endpoint";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "@/types/category";
+import Image, { ImageLoader } from "next/image";
 
 export default function EditProduct({ productId, fetchProductData, take }: { take: number, productId: number | undefined, fetchProductData: (start: number, limit: number) => void }) {
     const [openEditProduct, setOpenEditProduct] = React.useState(false);
@@ -90,6 +91,7 @@ export default function EditProduct({ productId, fetchProductData, take }: { tak
             console.log(error);
         }
     }, []);
+
     
     const fetchProduct = React.useCallback(async () => {
         const productRes = await axiosInstance.get(`${API_ENDPOINT.PRODUCT_DETAIL}/${productId}`);
@@ -140,7 +142,7 @@ export default function EditProduct({ productId, fetchProductData, take }: { tak
                     <DialogTitle>Edit Produk</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <img src={value.image ?? "https://picsum.photos/300/170"} alt="random-img" className="w-40 self-center" />
+                    <Image width={160} height={100} loader={myImageLoader}  src={value.image ?? "https://picsum.photos/300/170"} alt="random-img" className="w-40 self-center" />
                     <Input
                         type="text"
                         value={value.image}

@@ -3,6 +3,7 @@ import { selectedItemsAtom } from "@/lib/jotai";
 import { Item } from "@/types";
 import { Product } from "@/types/product";
 import { formatPrice } from "@/utils/currency.util";
+import { myImageLoader } from "@/utils/util";
 import { useAtom } from "jotai";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
@@ -63,7 +64,7 @@ export default function ProductsContainer({ products }: { products: Product[] })
                   }
                 >
                   <p className="text-sm">{product.name}</p>
-                  <img className="max-h-20" src={product.image??"https://picsum.photos/200"} alt="product" />
+                  <Image width={160} height={80} loader={myImageLoader} className="max-h-20" src={product.image??"https://picsum.photos/200"} alt="product" />
                   <p className="text-xs font-bold">
                     {formatPrice(Number(product.sellPrice))}
                   </p>
