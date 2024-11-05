@@ -10,8 +10,13 @@ const API_ENDPOINT = {
     //uom
     UOM_LIST: `${CONFIG.BASE_URL}/uoms/list`,
 
+    //INVENTORY
+    GET_INVENTORY: `${CONFIG.BASE_URL}/inventory/list`,
+    UPDATE_INVENTORY: `${CONFIG.BASE_URL}/inventory/update`,
+
     //product
     PRODUCT_LIST: `${CONFIG.BASE_URL}/products/all`,
+    PRODUCT_DETAIL: `${CONFIG.BASE_URL}/products/detail`,
     ADD_PRODUCT: `${CONFIG.BASE_URL}/products/create`,
     UPDATE_PRODUCT: `${CONFIG.BASE_URL}/products/update`,
     DELETE_PRODUCT: `${CONFIG.BASE_URL}/products/delete`,

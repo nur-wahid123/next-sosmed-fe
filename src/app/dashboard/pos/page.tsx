@@ -10,9 +10,10 @@ import API_ENDPOINT from "../../../../config/endpoint";
 import axiosInstance from "@/utils/axios-util";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Payment from "@/components/pos/payment";
+import { Product } from "@/types/product";
 
 export default function POSPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<{ id: number; name: string }[]>(
     []
   );
@@ -87,7 +88,7 @@ export default function POSPage() {
               />
             </div>
             <Separator className="my-4" />
-            <div className="mr-2 h-[50vh]">
+            <div className="mr-2 max-h-fit">
               <ProductsContainer products={products} />
             </div>
           </div>

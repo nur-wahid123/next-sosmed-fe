@@ -1,21 +1,25 @@
 "use client";
 import { selectedItemsAtom } from "@/lib/jotai";
 import { Item } from "@/types";
+import { Product } from "@/types/product";
 import { formatPrice } from "@/utils/currency.util";
 import { useAtom } from "jotai";
 import { Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
-export default function ProductsContainer({ products }: { products: Item[] }) {
+export default function ProductsContainer({ products }: { products: Product[] }) {
   const [selectedProducts, setSelectedProducts] = useAtom(selectedItemsAtom);
 
-  const handleAddItem = (item: Item, qty: number) => {
+  const handleAddItem = (product: Product, qty: number) => {
+    const item = new Item();
+    Object.assign(item, product);
     setSelectedProducts((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && exixtingItem.quantity < qty) {
+      if (exixtingItem && (exixtingItem?.quantity??0) < qty) {
         return prevItems.map((i) =>
           i.id === item.id
-            ? { ...i, max_qty: qty, quantity: i.quantity + 1 }
+            ? { ...i, max_qty: qty, quantity: (i.quantity??0) + 1 }
             : i
         );
       } else if (!exixtingItem) {
@@ -26,12 +30,14 @@ export default function ProductsContainer({ products }: { products: Item[] }) {
     });
   };
 
-  const handleRemoveItem = (item: Item) => {
+  const handleRemoveItem = (product: Product) => {
+    const item = new Item();
+    Object.assign(item, product);
     setSelectedProducts((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && exixtingItem.quantity > 1) {
+      if (exixtingItem && (exixtingItem.quantity??0) > 1) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity??0) - 1 } : i
         );
       } else {
         return prevItems.filter((i) => i.id !== item.id);
@@ -43,28 +49,29 @@ export default function ProductsContainer({ products }: { products: Item[] }) {
     <div className="h-full overflow-y-auto grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
       {products.length > 0 ? (
         <>
-          {products.map((product: any) => {
+          {products.map((product: Product ) => {
             if (!product.inventory) return null;
             return (
               <div
                 key={product.id}
-                className="p-2 pt-0 h-28 w-full flex flex-col justify-between rounded-md shadow hover:shadow-inner border border-slate-200"
+                className="p-2 pt-0 h-fit w-full flex flex-col items-center text-center justify-between rounded-md shadow hover:shadow-inner border border-slate-200"
               >
                 <button
-                  className="text-left h-2/3"
+                  className="text-center h-2/3 flex flex-col items-center"
                   onClick={() =>
-                    handleAddItem(product, product.inventory.qty as number)
+                    handleAddItem(product, product?.inventory?.qty as number)
                   }
                 >
                   <p className="text-sm">{product.name}</p>
-                  <p className="text-xs">
+                  <img className="max-h-20" src={product.image??"https://picsum.photos/200"} alt="product" />
+                  <p className="text-xs font-bold">
                     {formatPrice(Number(product.sellPrice))}
                   </p>
                 </button>
                 <div className="flex bg-white rounded-md gap-3 p-2 items-center self-end">
                   <button
                     onClick={() =>
-                      handleAddItem(product, product.inventory.qty as number)
+                      handleAddItem(product, product?.inventory?.qty as number)
                     }
                   >
                     <Plus className="w-4 h-4" />

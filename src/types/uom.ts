@@ -1,5 +1,5 @@
-export interface Uom{
-    name?: string
-    id?:number
-    description?: string
+export interface Uom {
+  name?: string;
+  id?: number;
+  description?: string;
 }

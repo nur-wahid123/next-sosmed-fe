@@ -11,10 +11,6 @@ import {
 import axiosInstance from "@/utils/axios-util";
 import API_ENDPOINT from "../../../../../config/endpoint";
 import React, { useEffect, useState } from "react";
-import { toTitleCase } from "@/utils/util";
-import { formatPrice } from "@/utils/currency.util";
-import useDebounce from "@/hooks/useDebounce";
-import AddProduct from "@/components/product/add-product.components";
 import SearchBar from "@/components/search-bar";
 import PaginationSelf, { PaginateContentProps } from "@/components/pagination";
 import {
@@ -24,8 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { formatPrice } from "@/utils/currency.util";
 import { Product } from "@/types/product";
-import EditProduct from "@/components/product/edit-product.component";
+import EditInventory from "@/components/inventory/edit-inventory.components";
 
 
 export default function Page() {
@@ -39,7 +36,7 @@ export default function Page() {
   ) => {
     try {
       const res = await axiosInstance.get(
-        `${API_ENDPOINT.PRODUCT_LIST}?page=${start}&take=${limit}&search=${search}`
+        `${API_ENDPOINT.GET_INVENTORY}?page=${start}&take=${limit}&search=${search}`
       );
 
       if (Array.isArray(res.data.data)) {
@@ -52,36 +49,39 @@ export default function Page() {
       console.error("Error fetching products:", error);
     }
   }
-  , [search]);
+    , [search]);
   useEffect(() => {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
   }, [fetchData, pagination?.page, pagination?.take, search]);
 
   function handleSearch(query: string) {
     if (query !== search) {
-      setPagination({...pagination,page:1})
+      setPagination({ ...pagination, page: 1 })
       setSearch(query);
     }
+  }
+
+  function reFetech(){
+    fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
   }
 
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
-        Barang
+        Stock
       </h1>
       <div className="w-full flex flex-col gap-4">
         {/* ({flatData.length} of {totalDBRowCount} rows fetched) */}
         <div className="flex gap-6 items-center justify-between">
           <SearchBar onSearch={handleSearch} />
-          <AddProduct />
           <div className="flex gap-4 items-center">
             <p>Rows</p>
-            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e),page:1 })}>
+            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e), page: 1 })}>
               <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="Rows" />
               </SelectTrigger>
               <SelectContent>
-                {[10,20,30,40,50].map((item) => (
+                {[10, 20, 30, 40, 50].map((item) => (
                   <SelectItem key={item} value={item.toString()}>
                     {item}
                   </SelectItem>
@@ -101,26 +101,28 @@ export default function Page() {
           <Table>
             <TableHeader className="bg-slate-100 text-black">
               <TableRow>
-                <TableHead>No.</TableHead>
                 <TableHead>Produk</TableHead>
-                <TableHead>Harga Beli</TableHead>
-                <TableHead>Harga Jual</TableHead>
-                <TableHead>Kategori</TableHead>
-                <TableHead>Merek</TableHead>
+                <TableHead>Qty</TableHead>
+                <TableHead>Harga</TableHead>
+                <TableHead>Total</TableHead>
                 <TableHead>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{formatPrice(product?.buyPrice ?? 0)}</TableCell>
-                  <TableCell>{formatPrice(product?.sellPrice ?? 0)}</TableCell>
-                  <TableCell>{toTitleCase(product.category?.name ?? "")}</TableCell>
-                  <TableCell>{toTitleCase(product.brand?.name ?? "")}</TableCell>
                   <TableCell>
-                    <EditProduct fetchProductData={fetchData} take={pagination?.take??20} productId={product.id} />
+                    <p className="text-sm">{product.code}</p>
+                    <p className="font-semibold text-lg">{product.name}</p>
+                    <p className="text-sm font-light">{product.uom?.name}</p>
+                  </TableCell>
+                  <TableCell>
+                    {product?.inventory?.qty ?? 0}
+                  </TableCell>
+                  <TableCell>{formatPrice(product.sellPrice ?? 0)}</TableCell>
+                  <TableCell>{formatPrice((product.sellPrice ?? 0) * (product?.inventory?.qty ?? 0))}</TableCell>
+                  <TableCell>
+                    <EditInventory reFetch={reFetech} product={product} />
                   </TableCell>
                 </TableRow>
               ))}

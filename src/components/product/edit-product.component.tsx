@@ -18,17 +18,20 @@ import API_ENDPOINT from "../../../config/endpoint";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Category } from "@/types/category";
 
-export default function EditProduct({ product, fetchProductData, take }: { take: number, product: Product, fetchProductData: (start: number, limit: number) => void }) {
+export default function EditProduct({ productId, fetchProductData, take }: { take: number, productId: number | undefined, fetchProductData: (start: number, limit: number) => void }) {
     const [openEditProduct, setOpenEditProduct] = React.useState(false);
+    const [product, setProduct] = React.useState({} as Product);
     const [open, setOpen] = React.useState({ categories: false, brands: false, uoms: false })
+    const toast = useToast()
     const [value, setValue] = React.useState({
-        category_id: product.category?.id,
-        brand_id: product.brand?.id,
-        uom_id: product.uom?.id,
-        code: product.code,
-        name: product.name,
-        sell_price: product.sellPrice ?? 0,
-        buy_price: product.buyPrice ?? 0,
+        category_id: 0,
+        brand_id: 0,
+        uom_id: 0,
+        code: "",
+        name: "",
+        sell_price: 0,
+        buy_price: 0,
+        image: "",
     })
     const [constantData, setConstantData] = React.useState({
         categories: [] as Category[],
@@ -43,6 +46,23 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
         const numericValue = e.target.value.replace(/\D/g, "");
         setValue({ ...value, [name]: Number(numericValue) });
     };
+
+    React.useEffect(() => {
+        if (product) {
+            setValue({
+                category_id: product.category?.id ?? 0,
+                brand_id: product.brand?.id ?? 0,
+                uom_id: product.uom?.id ?? 0,
+                code: product.code ?? "",
+                name: product.name ?? "",
+                sell_price: product.sellPrice ?? 0,
+                buy_price: product.buyPrice ?? 0,
+                image: product.image ?? "",
+            })
+        }
+    }, [product]);
+
+    
     const fetchData = React.useCallback(async () => {
         try {
             // Fetch categories
@@ -51,14 +71,14 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                 ...prevData,
                 categories: categoryResponse.data,
             }));
-
+            
             // Fetch brands
             const brandResponse = await axiosInstance.get(API_ENDPOINT.BRAND_LIST);
             setConstantData((prevData) => ({
                 ...prevData,
                 brands: brandResponse.data.data,
             }));
-
+            
             // Fetch uoms
             const uomResponse = await axiosInstance.get(API_ENDPOINT.UOM_LIST);
             setConstantData((prevData) => ({
@@ -70,18 +90,22 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
             console.log(error);
         }
     }, []);
-
+    
+    const fetchProduct = React.useCallback(async () => {
+        const productRes = await axiosInstance.get(`${API_ENDPOINT.PRODUCT_DETAIL}/${productId}`);
+        setProduct(productRes.data);
+    },[productId])
+    
     React.useEffect(() => {
-        fetchData();
-        return () => {
+        if(openEditProduct===true){
+            fetchData();
+            fetchProduct()
+        }
+    }, [fetchProduct, openEditProduct, fetchData]);
 
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    const toast = useToast();
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        await axiosInstance.patch(`${API_ENDPOINT.UPDATE_PRODUCT}/${product.id}`, value)
+        await axiosInstance.patch(`${API_ENDPOINT.UPDATE_PRODUCT}/${productId}`, value)
             .then((res) => {
                 toast.toast({
                     title: "Success",
@@ -90,6 +114,9 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                 });
                 fetchProductData(1, take);
                 setOpenEditProduct(false);
+            })
+            .catch((err) => {
+                toast.toast({ title: "Error", description: err.response.data.message, variant: "destructive" })
             })
     }
     return (
@@ -102,7 +129,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                 <button><Edit className="w-4"></Edit></button>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Edit {product?.name?.split(" ")[0] ??"Produk"}</p>
+                                <p>Edit {value?.name?.split(" ")[0] ?? "Produk"}</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -113,6 +140,12 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                     <DialogTitle>Edit Produk</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <img src={value.image ?? "https://picsum.photos/300/170"} alt="random-img" className="w-40 self-center" />
+                    <Input
+                        type="text"
+                        value={value.image}
+                        onChange={(e) => setValue({ ...value, image: e.target.value })}
+                    />
                     <div className="flex flex-wrap gap-4">
                         <div className="flex flex-col gap-2">
                             <Label>Kategori</Label>
@@ -121,7 +154,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                     <Button
                                         variant="outline"
                                         role="combobox"
-                                        className="w-[200px] justify-between"
+                                        className="max-w-64 justify-between"
                                     >
                                         {value.category_id !== 0
                                             ? toTitleCase(String(constantData.categories.find((categorie) => categorie.id === value.category_id)?.name))
@@ -129,7 +162,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
+                                <PopoverContent className="max-w-64 p-0">
                                     <Command>
                                         <CommandInput placeholder="Search categorie..." className="h-9" />
                                         <CommandList>
@@ -168,7 +201,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                     <Button
                                         variant="outline"
                                         role="combobox"
-                                        className="w-[200px] justify-between"
+                                        className="max-w-64 justify-between"
                                     >
                                         {value.brand_id !== 0
                                             ? toTitleCase(String(constantData.brands.find((brand) => brand.id === value.brand_id)?.name))
@@ -176,7 +209,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
+                                <PopoverContent className="max-w-64 p-0">
                                     <Command>
                                         <CommandInput placeholder="Search brand..." className="h-9" />
                                         <CommandList>
@@ -215,7 +248,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                     <Button
                                         variant="outline"
                                         role="combobox"
-                                        className="w-[200px] justify-between"
+                                        className="max-w-64 justify-between"
                                     >
                                         {value.uom_id !== 0
                                             ? toTitleCase(String(constantData.uoms.find((uom) => uom.id === value.uom_id)?.description))
@@ -223,7 +256,7 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                                         <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
+                                <PopoverContent className="max-w-64 p-0">
                                     <Command>
                                         <CommandInput placeholder="Search uom..." className="h-9" />
                                         <CommandList>
@@ -255,34 +288,39 @@ export default function EditProduct({ product, fetchProductData, take }: { take:
                             </Popover>
                         </div>
                     </div>
-
-                    <label htmlFor="price">Harga Beli:</label>
-                    <div className="relative max-w-64 flex items-center">
-                        <span className="absolute left-3 font-bold  pointer-events-none">
-                            Rp.
-                        </span>
-                        <Input
-                            type="text"
-                            inputMode="numeric"
-                            className="pl-10 h-fit text-right"
-                            placeholder="0"
-                            value={value.buy_price.toLocaleString()}
-                            onChange={(e) => handleInputChange(e, 'buy_price')}
-                        />
-                    </div>
-                    <label htmlFor="price">Harga Jual:</label>
-                    <div className="relative max-w-64 flex items-center">
-                        <span className="absolute left-3 font-bold  pointer-events-none">
-                            Rp.
-                        </span>
-                        <Input
-                            type="text"
-                            inputMode="numeric"
-                            className="pl-10 h-fit text-right"
-                            placeholder="0"
-                            value={value.sell_price.toLocaleString()}
-                            onChange={(e) => handleInputChange(e, 'sell_price')}
-                        />
+                    <div className="flex gap-3">
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="price">Harga Beli:</label>
+                            <div className="relative max-w-64 flex items-center">
+                                <span className="absolute left-3 font-bold  pointer-events-none">
+                                    Rp.
+                                </span>
+                                <Input
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="pl-10 h-fit text-right"
+                                    placeholder="0"
+                                    value={value.buy_price.toLocaleString()}
+                                    onChange={(e) => handleInputChange(e, 'buy_price')}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="price">Harga Jual:</label>
+                            <div className="relative max-w-64 flex items-center">
+                                <span className="absolute left-3 font-bold  pointer-events-none">
+                                    Rp.
+                                </span>
+                                <Input
+                                    type="text"
+                                    inputMode="numeric"
+                                    className="pl-10 h-fit text-right"
+                                    placeholder="0"
+                                    value={value.sell_price.toLocaleString()}
+                                    onChange={(e) => handleInputChange(e, 'sell_price')}
+                                />
+                            </div>
+                        </div>
                     </div>
                     <Label>Nama Produk</Label>
                     <Input

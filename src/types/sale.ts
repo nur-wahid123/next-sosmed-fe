@@ -3,11 +3,11 @@ import { Payment } from "./payment";
 import { Product } from "./product";
 
 export interface Sale {
-  id?:number;
+  id?: number;
   code?: string;
   date?: Date;
-  saleItems?: Product[]
+  saleItems?: Product[];
   total: number;
-  payments?: Payment[]
-  paymentStatus:PaymentStatus
+  payments?: Payment[];
+  paymentStatus: PaymentStatus;
 }

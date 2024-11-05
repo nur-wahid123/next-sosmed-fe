@@ -7,11 +7,11 @@ export class LoginForm {
   }
 }
 
-export type Item = {
-  id: number;
-  name: string;
-  sellPrice: number;
-  quantity: number;
-  max_qty: number;
-  category: string;
+export class Item  {
+  id?: number;
+  name?: string;
+  sellPrice?: number;
+  quantity?: number;
+  max_qty?: number;
+  category?: string;
 };

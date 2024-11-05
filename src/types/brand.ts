@@ -1,5 +1,5 @@
-export interface Brand{
-    id?: number;
-    name?: string;
-    code?: string;
+export interface Brand {
+  id?: number;
+  name?: string;
+  code?: string;
 }

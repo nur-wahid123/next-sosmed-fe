@@ -2,8 +2,9 @@
 import Sidebar from "@/components/navigation/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
-import { Database, File, Inbox, ScanBarcode,Monitor, Send, Landmark, WalletMinimal } from "lucide-react";
+import { Database, File, Inbox, ScanBarcode,Monitor, Send, Landmark, WalletMinimal, LogOut } from "lucide-react";
 import React from "react";
+
 
 const sidebarMenu = [
   {
@@ -15,11 +16,6 @@ const sidebarMenu = [
     title: "POS",
     href: "/dashboard/pos",
     icon: ScanBarcode,
-  },
-  {
-    title: "Purchase",
-    href: "/dashboard/purchase",
-    icon: File,
   },
   {
     title: "Master",
@@ -44,8 +40,8 @@ const sidebarMenu = [
     icon: Monitor,
     submenu: [
       {
-        title: "Pembelian",
-        href: "/dashboard/transaction/purchase",
+        title: "Inventory",
+        href: "/dashboard/transaction/inventory",
         icon: Landmark,
       },
       {
