@@ -55,8 +55,9 @@ export default function POSPage() {
   }, []);
   
   const handleSelectedCategory = useCallback(async (category: number) => {
+    const url = category!==0 ? `${API_ENDPOINT.PRODUCT_LIST}?category_id=${category}` : `${API_ENDPOINT.PRODUCT_LIST}`;
     await axiosInstance
-    .get(`${API_ENDPOINT.PRODUCT_LIST}?category_id=${category}`)
+    .get(url)
     .then((res) => {
         setProducts(res.data.data);
       });

@@ -50,12 +50,7 @@ const sidebarMenu = [
         icon: WalletMinimal,
       },
     ],
-  },
-  {
-    title: "Info",
-    href: "/dashboard/info",
-    icon: Send,
-  },
+  }
 ];
 
 export default function DashboardLayout({

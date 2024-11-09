@@ -26,18 +26,29 @@ import EditInventory from "@/components/inventory/edit-inventory.components";
 
 
 export default function Page() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState<PaginateContentProps>({});
   const [products, setProducts] = useState<Product[]>([]);
+  const [dataType, setDataType] = useState<string>("all");
+
+  const fetchInventory = async (start: number, limit:number, search:string) => {
+    const params = new URLSearchParams({
+      page: start.toString(),
+      take: limit.toString(),
+      search: search,
+      status: dataType
+      });
+  
+    const res = await axiosInstance.get(`${API_ENDPOINT.GET_INVENTORY}?${params.toString()}`);
+    return res;
+  };
 
   const fetchData = React.useCallback(async (
     start: number,
     limit: number,
   ) => {
     try {
-      const res = await axiosInstance.get(
-        `${API_ENDPOINT.GET_INVENTORY}?page=${start}&take=${limit}&search=${search}`
-      );
+      const res = await fetchInventory(start, limit, search);
 
       if (Array.isArray(res.data.data)) {
         setProducts(res.data.data);
@@ -49,10 +60,11 @@ export default function Page() {
       console.error("Error fetching products:", error);
     }
   }
-    , [search]);
+    , [search,dataType]);
+    
   useEffect(() => {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
-  }, [fetchData, pagination?.page, pagination?.take, search]);
+  }, [fetchData, pagination?.page, pagination?.take, search, ]);
 
   function handleSearch(query: string) {
     if (query !== search) {
@@ -82,6 +94,19 @@ export default function Page() {
               </SelectTrigger>
               <SelectContent>
                 {[10, 20, 30, 40, 50].map((item) => (
+                  <SelectItem key={item} value={item.toString()}>
+                    {item}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={dataType} onValueChange={(e) => setDataType(e)}>
+              <SelectTrigger className="w-[90px]">
+                <SelectValue placeholder="Rows" />
+              </SelectTrigger>
+              <SelectContent>
+                {['all','0','>0',].map((item) => (
                   <SelectItem key={item} value={item.toString()}>
                     {item}
                   </SelectItem>

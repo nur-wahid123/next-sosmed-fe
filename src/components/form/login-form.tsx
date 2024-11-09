@@ -24,6 +24,7 @@ import axios from "axios";
 import API_ENDPOINT from "../../../config/endpoint";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 const loginFormSchema = z.object({
   username: z.string().min(3),
@@ -40,8 +41,20 @@ export default function LoginForm() {
   });
 
   const toaster = useToast()
-
   const router = useRouter();
+  React.useEffect(()=>{
+    loginForm.reset()
+    const token = Cookies.get('token')
+    if(token){
+      toaster.toast({
+        title: "Sudah Login",
+        description: "Login Sana"
+      })
+      router.push('/dashboard')
+    }
+  },[loginForm])
+
+
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
     try {

@@ -17,10 +17,10 @@ export default function ProductsContainer({ products }: { products: Product[] })
     Object.assign(item, product);
     setSelectedProducts((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && (exixtingItem?.quantity??0) < qty) {
+      if (exixtingItem && (exixtingItem?.quantity ?? 0) < qty) {
         return prevItems.map((i) =>
           i.id === item.id
-            ? { ...i, max_qty: qty, quantity: (i.quantity??0) + 1 }
+            ? { ...i, max_qty: qty, quantity: (i.quantity ?? 0) + 1 }
             : i
         );
       } else if (!exixtingItem) {
@@ -36,9 +36,9 @@ export default function ProductsContainer({ products }: { products: Product[] })
     Object.assign(item, product);
     setSelectedProducts((prevItems) => {
       const exixtingItem = prevItems.find((i) => i.id === item.id);
-      if (exixtingItem && (exixtingItem.quantity??0) > 1) {
+      if (exixtingItem && (exixtingItem.quantity ?? 0) > 1) {
         return prevItems.map((i) =>
-          i.id === item.id ? { ...i, quantity: (i.quantity??0) - 1 } : i
+          i.id === item.id ? { ...i, quantity: (i.quantity ?? 0) - 1 } : i
         );
       } else {
         return prevItems.filter((i) => i.id !== item.id);
@@ -50,7 +50,7 @@ export default function ProductsContainer({ products }: { products: Product[] })
     <div className="h-full overflow-y-auto grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
       {products.length > 0 ? (
         <>
-          {products.map((product: Product ) => {
+          {products.map((product: Product) => {
             if (!product.inventory) return null;
             return (
               <div
@@ -63,9 +63,11 @@ export default function ProductsContainer({ products }: { products: Product[] })
                     handleAddItem(product, product?.inventory?.qty as number)
                   }
                 >
-                  <p className="text-sm">{product.name}</p>
-                  <Image width={160} height={80} loader={myImageLoader} className="max-h-20" src={product.image??"https://picsum.photos/200"} alt="product" />
-                  <p className="text-xs font-bold">
+                  <div className="relative h-20">
+                    <Image height={80} width={80} loader={myImageLoader} className="max-h-20" src={product.image ?? "https://picsum.photos/200"} alt="product" />
+                  </div>
+                  <p className="text-sm line-clamp-1 font-bold">{product.name}</p>
+                  <p className="text-xs">
                     {formatPrice(Number(product.sellPrice))}
                   </p>
                 </button>
