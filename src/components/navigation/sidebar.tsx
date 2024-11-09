@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { LogOut, LucideIcon } from 'lucide-react'
+import { DoorOpen, LogOut, LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import Cookie from 'js-cookie'
@@ -89,7 +89,7 @@ export default function Sidebar({ links }: NavProps) {
                     )}
                     onClick={logout}
                 >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <DoorOpen className="mr-2 h-4 w-4" />
                     <span>Log Out</span>
                 </Button>
             </nav>

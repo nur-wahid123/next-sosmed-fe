@@ -13,6 +13,7 @@ const API_ENDPOINT = {
     //INVENTORY
     GET_INVENTORY: `${CONFIG.BASE_URL}/inventory/list`,
     UPDATE_INVENTORY: `${CONFIG.BASE_URL}/inventory/update`,
+    INVENTORY_INFORMATION: `${CONFIG.BASE_URL}/inventory/information`,
 
     //product
     PRODUCT_LIST: `${CONFIG.BASE_URL}/products/all`,
@@ -22,7 +23,7 @@ const API_ENDPOINT = {
     DELETE_PRODUCT: `${CONFIG.BASE_URL}/products/delete`,
 
     //category
-    CATEGORY_LIST: `${CONFIG.BASE_URL}/categories`,
+    CATEGORY_LIST: `${CONFIG.BASE_URL}/categories/list`,
     CATEGORY_CASHEER: `${CONFIG.BASE_URL}/categories/cashier`,
 
     //supplier

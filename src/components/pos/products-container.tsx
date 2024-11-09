@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { Badge } from "../ui/badge";
 
 export default function ProductsContainer({ products }: { products: Product[] }) {
   const [selectedProducts, setSelectedProducts] = useAtom(selectedItemsAtom);
@@ -55,13 +56,13 @@ export default function ProductsContainer({ products }: { products: Product[] })
             return (
               <div
                 key={product.id}
-                className="p-2 pt-0 h-fit w-full flex flex-col items-center text-center justify-between rounded-md shadow hover:shadow-inner border border-slate-200"
+                className="p-2 pt-0 h-fit w-full flex flex-col items-center text-center justify-between hover:border-black rounded-md shadow hover:shadow-inner border border-slate-200"
+                onClick={() =>
+                  handleAddItem(product, product?.inventory?.qty as number)
+                }
               >
                 <button
                   className="text-center h-2/3 flex flex-col items-center"
-                  onClick={() =>
-                    handleAddItem(product, product?.inventory?.qty as number)
-                  }
                 >
                   <div className="relative h-20">
                     <Image height={80} width={80} loader={myImageLoader} className="max-h-20" src={product.image ?? "https://picsum.photos/200"} alt="product" />
@@ -71,21 +72,12 @@ export default function ProductsContainer({ products }: { products: Product[] })
                     {formatPrice(Number(product.sellPrice))}
                   </p>
                 </button>
-                <div className="flex bg-white rounded-md gap-3 p-2 items-center self-end">
-                  <button
-                    onClick={() =>
-                      handleAddItem(product, product?.inventory?.qty as number)
-                    }
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                  <p className="w-4 text-center text-sm">
-                    {selectedProducts.find((i) => i.id === product.id)
-                      ?.quantity || 0}
-                  </p>
-                  <button onClick={() => handleRemoveItem(product)}>
-                    <Minus className="w-4 h-4" />
-                  </button>
+                <div className="h-6 w-full">
+                {selectedProducts.find((i) => i.id === product.id) ? (
+                  <Badge>
+                    {selectedProducts.find((i) => i.id === product.id)?.quantity}
+                  </Badge>
+                ): null}
                 </div>
               </div>
             );

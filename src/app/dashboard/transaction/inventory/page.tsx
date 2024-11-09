@@ -23,6 +23,7 @@ import {
 import { formatPrice } from "@/utils/currency.util";
 import { Product } from "@/types/product";
 import EditInventory from "@/components/inventory/edit-inventory.components";
+import { CardsStats } from "@/components/inventory/card-stats.component";
 
 
 export default function Page() {
@@ -30,15 +31,25 @@ export default function Page() {
   const [pagination, setPagination] = useState<PaginateContentProps>({});
   const [products, setProducts] = useState<Product[]>([]);
   const [dataType, setDataType] = useState<string>("all");
+  const [stats, setStats] = React.useState<{
+    all_product: number
+    , total_item: number
+    , value_of_products: number
 
-  const fetchInventory = async (start: number, limit:number, search:string) => {
+  }>({
+    all_product: 0
+    , total_item: 0
+    , value_of_products: 0
+  });
+
+  const fetchInventory = async (start: number, limit: number, search: string) => {
     const params = new URLSearchParams({
       page: start.toString(),
       take: limit.toString(),
       search: search,
       status: dataType
-      });
-  
+    });
+
     const res = await axiosInstance.get(`${API_ENDPOINT.GET_INVENTORY}?${params.toString()}`);
     return res;
   };
@@ -56,15 +67,25 @@ export default function Page() {
       if (res.data.pagination) {
         setPagination(res.data.pagination);
       }
+      try {
+        const params = new URLSearchParams({
+          search: search,
+          status: dataType
+        });
+        const res = await axiosInstance.get(`${API_ENDPOINT.INVENTORY_INFORMATION}?${params.toString()}`);
+        setStats(res.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   }
-    , [search,dataType]);
-    
+    , [search, dataType]);
+
   useEffect(() => {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
-  }, [fetchData, pagination?.page, pagination?.take, search, ]);
+  }, [fetchData, pagination?.page, pagination?.take, search,]);
 
   function handleSearch(query: string) {
     if (query !== search) {
@@ -73,7 +94,7 @@ export default function Page() {
     }
   }
 
-  function reFetech(){
+  function reFetech() {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
   }
 
@@ -106,7 +127,7 @@ export default function Page() {
                 <SelectValue placeholder="Rows" />
               </SelectTrigger>
               <SelectContent>
-                {['all','0','>0',].map((item) => (
+                {['all', '0', '>0',].map((item) => (
                   <SelectItem key={item} value={item.toString()}>
                     {item}
                   </SelectItem>
@@ -122,37 +143,47 @@ export default function Page() {
             height: "600px", //should be a fixed height
           }}
         >
-          {/* Even though we're still using sematic table tags, we must use CSS grid and flexbox for dynamic row heights */}
-          <Table>
-            <TableHeader className="bg-slate-100 text-black">
-              <TableRow>
-                <TableHead>Produk</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Harga</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Aksi</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <p className="text-sm">{product.code}</p>
-                    <p className="font-semibold text-lg">{product.name}</p>
-                    <p className="text-sm font-light">{product.uom?.name}</p>
-                  </TableCell>
-                  <TableCell>
-                    {product?.inventory?.qty ?? 0}
-                  </TableCell>
-                  <TableCell>{formatPrice(product.sellPrice ?? 0)}</TableCell>
-                  <TableCell>{formatPrice((product.sellPrice ?? 0) * (product?.inventory?.qty ?? 0))}</TableCell>
-                  <TableCell>
-                    <EditInventory reFetch={reFetech} product={product} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <CardsStats data={stats} />
+          {
+            products.length === 0 ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-2xl font-semibold">No data found</p>
+              </div>
+            ) :
+              (
+
+                <Table>
+                  <TableHeader className="bg-slate-100 text-black">
+                    <TableRow>
+                      <TableHead>Produk</TableHead>
+                      <TableHead>Qty</TableHead>
+                      <TableHead>Harga</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>Aksi</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {products.map((product, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <p className="text-sm">{product.code}</p>
+                          <p className="font-semibold text-lg">{product.name}</p>
+                          <p className="text-sm font-light">{product.uom?.name}</p>
+                        </TableCell>
+                        <TableCell>
+                          {product?.inventory?.qty ?? 0}
+                        </TableCell>
+                        <TableCell>{formatPrice(product.sellPrice ?? 0)}</TableCell>
+                        <TableCell>{formatPrice((product.sellPrice ?? 0) * (product?.inventory?.qty ?? 0))}</TableCell>
+                        <TableCell>
+                          <EditInventory reFetch={reFetech} product={product} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )
+          }
         </div>
       </div>
     </div>

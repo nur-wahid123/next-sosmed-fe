@@ -70,7 +70,7 @@ export default function EditProduct({ productId, fetchProductData, take }: { tak
             const categoryResponse = await axiosInstance.get(API_ENDPOINT.CATEGORY_LIST);
             setConstantData((prevData) => ({
                 ...prevData,
-                categories: categoryResponse.data,
+                categories: categoryResponse.data.data,
             }));
             
             // Fetch brands

@@ -2,7 +2,7 @@
 import Sidebar from "@/components/navigation/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/toaster";
-import { Database, File, Inbox, ScanBarcode,Monitor, Send, Landmark, WalletMinimal, LogOut } from "lucide-react";
+import {Package, Tag, Layers, Factory, Archive, Receipt, Repeat, LayoutDashboard, Tablet, Sliders } from "lucide-react";
 import React from "react";
 
 
@@ -10,44 +10,54 @@ const sidebarMenu = [
   {
     title: "Home",
     href: "/dashboard",
-    icon: Inbox,
+    icon: LayoutDashboard,
   },
   {
     title: "POS",
     href: "/dashboard/pos",
-    icon: ScanBarcode,
+    icon: Tablet,
   },
   {
     title: "Master",
     href: "/dashboard/master",
-    icon: Database,
+    icon: Sliders,
     submenu: [
       {
         title: "Barang",
         href: "/dashboard/master/barang",
-        icon: Database,
+        icon: Package,
       },
       {
         title: "Supplier",
         href: "/dashboard/master/supplier",
-        icon: Database,
+        icon: Factory,
+      },
+      {
+        title: "Kategori",
+        href: "/dashboard/master/category",
+        icon: Layers,
+      },
+      {
+        title: "Merek",
+        href: "/dashboard/master/brand",
+        icon: Tag,
       },
     ],
   },
   {
-    title: "Transaction",
+    title: "Transaksi",
     href: "/dashboard/transaction",
-    icon: Monitor,
+    icon: Repeat,
     submenu: [
       {
-        title: "Inventory",
+        title: "Stock",
         href: "/dashboard/transaction/inventory",
-        icon: Landmark,
+        icon: Archive,
       },
       {
         title: "Penjualan",
         href: "/dashboard/transaction/sale",
-        icon: WalletMinimal,
+        icon: Receipt,
       },
     ],
   }
