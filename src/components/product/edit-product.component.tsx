@@ -111,7 +111,7 @@ export default function EditProduct({ productId, fetchProductData, take }: { tak
             .then((res) => {
                 toast.toast({
                     title: "Success",
-                    description: "Successfully updated product",
+                    description: "Berhasil update barang",
                     variant: "default",
                 });
                 fetchProductData(1, take);

@@ -88,7 +88,7 @@ export default function AddProduct() {
                 fetchData();
                 toast.toast({
                     title: "Success",
-                    description: "Successfully added product",
+                    description: "Berhasil Tambah Barang",
                     variant: "default",
                 })
                 setOpenAddProduct(false);

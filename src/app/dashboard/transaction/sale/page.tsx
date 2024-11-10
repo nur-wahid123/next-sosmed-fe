@@ -24,12 +24,14 @@ import { formatPrice } from "@/utils/currency.util";
 import { PaymentStatus } from "@/enums/payment-status.enum";
 import { Badge } from "@/components/ui/badge";
 import { Sale } from "@/types/sale";
+import StatsSale from "@/components/sale/stats-sale.component";
 
 
 export default function Page() {
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState<PaginateContentProps>({});
   const [sales, setSales] = useState<Sale[]>([]);
+  const [stats, setStats] = useState<{all_sale:number, total:number, total_returns:number}>({all_sale:0, total:0, total_returns:0});
 
   const fetchData = React.useCallback(async (
     start: number,
@@ -46,6 +48,11 @@ export default function Page() {
       if (res.data.pagination) {
         setPagination(res.data.pagination);
       }
+      const params = new URLSearchParams({
+        search: search
+      })
+      const response = await axiosInstance.get(`${API_ENDPOINT.GET_SALE_INFORMATION}?${params.toString()}`);
+      setStats(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -88,6 +95,7 @@ export default function Page() {
           </div>
           <PaginationSelf pagination={pagination} fetchData={fetchData} />
         </div>
+        <StatsSale data={stats}/>
         <div
           className="w-full"
           style={{

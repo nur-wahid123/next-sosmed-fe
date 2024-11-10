@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select"
 import { Supplier } from "@/types/supplier";
 import { Brand } from "@/types/brand";
+import AddBrand from "@/components/brand/add-brand.component";
+import EditBrand from "@/components/brand/update-brand.component";
 
 
 export default function Page() {
@@ -48,16 +50,20 @@ export default function Page() {
       console.error("Error fetching products:", error);
     }
   }
-  , [search]);
+    , [search]);
   useEffect(() => {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
   }, [fetchData, pagination?.page, pagination?.take, search]);
 
   function handleSearch(query: string) {
     if (query !== search) {
-      setPagination({...pagination,page:1})
+      setPagination({ ...pagination, page: 1 })
       setSearch(query);
     }
+  }
+
+  function reFetch() {
+    fetchData(1, pagination?.take ?? 20);
   }
 
   return (
@@ -71,18 +77,19 @@ export default function Page() {
           <SearchBar onSearch={handleSearch} />
           <div className="flex gap-4 items-center">
             <p>Rows</p>
-            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e),page:1 })}>
+            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e), page: 1 })}>
               <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="Rows" />
               </SelectTrigger>
               <SelectContent>
-                {[10,20,30,40,50].map((item) => (
+                {[10, 20, 30, 40, 50].map((item) => (
                   <SelectItem key={item} value={item.toString()}>
                     {item}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          <AddBrand reFetch={reFetch} />
           </div>
           <PaginationSelf pagination={pagination} fetchData={fetchData} />
         </div>
@@ -99,6 +106,7 @@ export default function Page() {
                 <TableHead>No.</TableHead>
                 <TableHead>Kode</TableHead>
                 <TableHead>Nama Merek</TableHead>
+                <TableHead>Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -107,6 +115,9 @@ export default function Page() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{brand.code}</TableCell>
                   <TableCell>{brand.name}</TableCell>
+                  <TableCell>
+                    <EditBrand brandId={brand.id} reFetch={reFetch} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

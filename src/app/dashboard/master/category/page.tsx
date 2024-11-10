@@ -23,6 +23,8 @@ import {
 import { Supplier } from "@/types/supplier";
 import { Category } from "@/types/category";
 import { toTitleCase } from "@/utils/util";
+import AddCategory from "@/components/category/add-category.component";
+import EditCategory from "@/components/category/update-category.component";
 
 
 export default function Page() {
@@ -49,18 +51,21 @@ export default function Page() {
       console.error("Error fetching products:", error);
     }
   }
-  , [search]);
+    , [search]);
   useEffect(() => {
     fetchData(pagination?.page ?? 1, pagination?.take ?? 20);
   }, [fetchData, pagination?.page, pagination?.take, search]);
 
   function handleSearch(query: string) {
     if (query !== search) {
-      setPagination({...pagination,page:1})
+      setPagination({ ...pagination, page: 1 })
       setSearch(query);
     }
   }
 
+  function reFetch() {
+    fetchData(1, pagination?.take ?? 20);
+  }
   return (
     <div>
       <h1 className="scroll-m-20 m-4 text-2xl font-extrabold tracking-tight lg:text-5xl">
@@ -72,18 +77,19 @@ export default function Page() {
           <SearchBar onSearch={handleSearch} />
           <div className="flex gap-4 items-center">
             <p>Rows</p>
-            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e),page:1 })}>
+            <Select value={pagination?.take?.toString()} onValueChange={(e) => setPagination({ ...pagination, take: Number(e), page: 1 })}>
               <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="Rows" />
               </SelectTrigger>
               <SelectContent>
-                {[10,20,30,40,50].map((item) => (
+                {[10, 20, 30, 40, 50].map((item) => (
                   <SelectItem key={item} value={item.toString()}>
                     {item}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            <AddCategory reFetch={reFetch} />
           </div>
           <PaginationSelf pagination={pagination} fetchData={fetchData} />
         </div>
@@ -97,24 +103,30 @@ export default function Page() {
             <div className="w-full h-full flex items-center justify-center">
               <p className="text-2xl font-bold">No Data</p>
             </div>
-          ):(
+          ) : (
             <Table>
-            <TableHeader className="bg-slate-100 text-black">
-              <TableRow>
-                <TableHead>No.</TableHead>
-                <TableHead>Nama Kategori</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{toTitleCase(category.name||"")}</TableCell>
+              <TableHeader className="bg-slate-100 text-black">
+                <TableRow>
+                  <TableHead>No.</TableHead>
+                  <TableHead>Kode Kategori</TableHead>
+                  <TableHead>Nama Kategori</TableHead>
+                  <TableHead>Aksi</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-            )}
+              </TableHeader>
+              <TableBody>
+                {categories.map((category, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{category.code}</TableCell>
+                    <TableCell>{toTitleCase(category.name || "")}</TableCell>
+                    <TableCell>
+                      <EditCategory categoryId={category.id} reFetch={reFetch} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
     </div>

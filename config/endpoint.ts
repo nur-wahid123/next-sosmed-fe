@@ -6,6 +6,9 @@ const API_ENDPOINT = {
 
     //brand
     BRAND_LIST: `${CONFIG.BASE_URL}/brands/list`,
+    BRAND_DETAIL: `${CONFIG.BASE_URL}/brands/detail`,
+    CREATE_BRAND: `${CONFIG.BASE_URL}/brands/create`,
+    UPDATE_BRAND: `${CONFIG.BASE_URL}/brands/update`,
 
     //uom
     UOM_LIST: `${CONFIG.BASE_URL}/uoms/list`,
@@ -24,7 +27,10 @@ const API_ENDPOINT = {
 
     //category
     CATEGORY_LIST: `${CONFIG.BASE_URL}/categories/list`,
+    CATEGORY_DETAIL: `${CONFIG.BASE_URL}/categories/detail`,
     CATEGORY_CASHEER: `${CONFIG.BASE_URL}/categories/cashier`,
+    CREATE_CATEGORY: `${CONFIG.BASE_URL}/categories/create`,
+    UPDATE_CATEGORY: `${CONFIG.BASE_URL}/categories/update`,
 
     //supplier
     SUPPLIER_LIST: `${CONFIG.BASE_URL}/suppliers/list`,
@@ -36,6 +42,7 @@ const API_ENDPOINT = {
     CREATE_SALE: `${CONFIG.BASE_URL}/sales/create`,
     GET_SALE: `${CONFIG.BASE_URL}/sales/list`,
     PAY_SALE: `${CONFIG.BASE_URL}/sales/payment`,
+    GET_SALE_INFORMATION: `${CONFIG.BASE_URL}/sales/information`,
     CHECK_SALE_NEED_TO_PAY: `${CONFIG.BASE_URL}/sales/need-to-pay`,
 
     //purchase

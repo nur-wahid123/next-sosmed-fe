@@ -15,7 +15,7 @@ export function CardsStats({data}:{data:{all_product: number
 
     return (
         <div className="flex flex-wrap gap-3 p-3">
-            <Card>
+            <Card className="px-20">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-normal">Total Produk</CardTitle>
                 </CardHeader>
@@ -26,7 +26,7 @@ export function CardsStats({data}:{data:{all_product: number
                     
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="px-16">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-normal">Total Item</CardTitle>
                 </CardHeader>
@@ -37,7 +37,7 @@ export function CardsStats({data}:{data:{all_product: number
                     
                 </CardContent>
             </Card>
-            <Card>
+            <Card className="px-12">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-normal">Valuasi Produk</CardTitle>
                 </CardHeader>
