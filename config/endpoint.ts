@@ -41,6 +41,7 @@ const API_ENDPOINT = {
     //sale
     CREATE_SALE: `${CONFIG.BASE_URL}/sales/create`,
     GET_SALE: `${CONFIG.BASE_URL}/sales/list`,
+    GET_SALE_DETAIL: `${CONFIG.BASE_URL}/sales/detail`,
     PAY_SALE: `${CONFIG.BASE_URL}/sales/payment`,
     GET_SALE_INFORMATION: `${CONFIG.BASE_URL}/sales/information`,
     CHECK_SALE_NEED_TO_PAY: `${CONFIG.BASE_URL}/sales/need-to-pay`,

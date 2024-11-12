@@ -25,6 +25,7 @@ import { PaymentStatus } from "@/enums/payment-status.enum";
 import { Badge } from "@/components/ui/badge";
 import { Sale } from "@/types/sale";
 import StatsSale from "@/components/sale/stats-sale.component";
+import { SaleDetailDialog } from "@/components/sale/detail-sale.component";
 
 
 export default function Page() {
@@ -109,6 +110,7 @@ export default function Page() {
                 <TableHead>Kode</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Status Pembayaran</TableHead>
+                <TableHead>Detail</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -127,6 +129,9 @@ export default function Page() {
                           return <Badge variant={"destructive"} >Belum Dibayar</Badge>;
                       }
                     })()}
+                  </TableCell>
+                  <TableCell>
+                    <SaleDetailDialog saleId={sale.id||0} />
                   </TableCell>
                 </TableRow>
               ))}

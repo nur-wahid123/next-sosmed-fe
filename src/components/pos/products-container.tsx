@@ -53,6 +53,7 @@ export default function ProductsContainer({ products }: { products: Product[] })
         <>
           {products.map((product: Product) => {
             if (!product.inventory) return null;
+            if (product.inventory.qty === 0) return null;
             return (
               <div
                 key={product.id}

@@ -42,18 +42,30 @@ export default function LoginForm() {
 
   const toaster = useToast()
   const router = useRouter();
-  React.useEffect(()=>{
-    loginForm.reset()
-    const token = Cookies.get('token')
-    if(token){
-      toaster.toast({
-        title: "Sudah Login",
-        description: "Login Sana"
-      })
-      router.push('/dashboard')
-    }
-  },[loginForm])
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    await axios.post(`${API_ENDPOINT.URL_LOGIN}`,loginForm.getValues())
+    .then(res => {
+      Cookies.set("token",res.data.data.access_token)
+      toaster.toast({
+        title: "Success Login",
+        description: "Login Sukses"
+      })
+      router.push("/dashboard")
+    })
+    .catch(err => {
+      toaster.toast({
+        title: "Error Login",
+        description: err.response.data.message,
+        variant: "destructive"
+      })
+      loginForm.setError("password", {
+        type: "custom",
+        message: "invalid credentials",
+      });
+    })
+  }
 
 
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
@@ -94,7 +106,7 @@ export default function LoginForm() {
       <CardContent>
         <Form {...loginForm}>
           <form
-            onSubmit={loginForm.handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
             className="space-y-8"
           >
             <FormField
