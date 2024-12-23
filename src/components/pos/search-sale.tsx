@@ -46,36 +46,38 @@ export default function SaleSearch({
 
   useEffect(() => {
     fetchData();
-    return () => {};
+    return () => { };
   }, []);
   return (
-    <div className="p-4">
+    <div className="p-4 h-full">
       <Input onChange={handleSearch} type="text" placeholder="Search" />
-      <Table className="w-full">
-        <TableCaption>A list of Sale</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Invoice</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {saleData.map((sale, i) => (
-            <TableRow
-              onClick={() => {
-                handleClick(sale);
-              }}
-              className="hover:brightness-90 hover:cursor-pointer"
-              key={i}
-            >
-              <TableCell>{sale.code}</TableCell>
-              <TableCell>{new Date(String(sale?.date)).toDateString()}</TableCell>
-              <TableCell>{sale.paymentStatus?.toUpperCase()}</TableCell>
+      <div className=" h-[40vh] overflow-auto">
+        <Table>
+          <TableCaption>A list of Sale</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Invoice</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {saleData.map((sale, i) => (
+              <TableRow
+                onClick={() => {
+                  handleClick(sale);
+                }}
+                className="hover:brightness-90 hover:cursor-pointer"
+                key={i}
+              >
+                <TableCell>{sale.code}</TableCell>
+                <TableCell>{new Date(String(sale?.date)).toDateString()}</TableCell>
+                <TableCell>{sale.paymentStatus?.toUpperCase()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

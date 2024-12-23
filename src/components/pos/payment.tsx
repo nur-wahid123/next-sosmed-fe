@@ -47,7 +47,7 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
         }
       });
     }
-    return () => {};
+    return () => { };
   }, [sale_code]);
 
   React.useEffect(() => {
@@ -72,7 +72,7 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
           });
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sale]);
 
   function handlePay() {
@@ -103,9 +103,9 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if(e.target.value ==='0'){
+    if (e.target.value === '0') {
       e.target.value = '';
-  }
+    }
     // Remove non-numeric characters before updating the state
     const numericValue = e.target.value.replace(/\D/g, "");
     setPay(Number(numericValue));
@@ -117,7 +117,7 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
     } else {
       setPay(0);
     }
-    return () => {};
+    return () => { };
   }, [isFullPaid, needToPay?.needToPay]);
 
   return (
@@ -133,17 +133,13 @@ export default function Payment({ sale_code }: { sale_code?: string }) {
                 <DialogTrigger>
                   <Button>{sale ? sale.code : "Search Sale Code"}</Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[800px] w-full">
-                  <DialogHeader>
-                    <DialogTitle>Search Sale</DialogTitle>
-                    <DialogDescription>
-                      <SaleSearch setOpen={setOpen} setSaleCode={setSale} />
-                    </DialogDescription>
-                  </DialogHeader>
+                <DialogContent className="sm:max-w-[800px] h-[75vh] w-full">
+                  <DialogTitle>Search Sale</DialogTitle>
+                  <SaleSearch setOpen={setOpen} setSaleCode={setSale} />
                 </DialogContent>
               </Dialog>
-              <Table className="h-full overflow-y-auto">
-                <TableCaption>A list of your product</TableCaption>
+              <Table className="overflow-y-auto">
+                <TableCaption>A list of Sale</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="">Item</TableHead>

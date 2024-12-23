@@ -47,7 +47,8 @@ export default function LoginForm() {
     e.preventDefault()
     await axios.post(`${API_ENDPOINT.URL_LOGIN}`,loginForm.getValues())
     .then(res => {
-      Cookies.set("token",res.data.data.access_token)
+      const twoHours = new Date(Date.now() + 2 * 60 * 60 * 1000)
+      Cookies.set("token",res.data.data.access_token, { expires: twoHours })
       toaster.toast({
         title: "Success Login",
         description: "Login Sukses"
@@ -67,40 +68,10 @@ export default function LoginForm() {
     })
   }
 
-
-  const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
-    try {
-      const response = await axios.post(API_ENDPOINT.URL_LOGIN, {
-        username: data.username,
-        password: data.password,
-      })
-      if (response.status === 200) {
-        toaster.toast({
-          title: "Success Login",
-          description: "Login Sukses"
-        })
-        Cookies.set("token", response.data.data.access_token, { expires: 1 });
-        router.push("/dashboard");
-      }
-    } catch (error:any) {
-      console.log(error);
-      
-      toaster.toast({
-        title: "Error Login",
-        description: error.response.data.message,
-        variant: "destructive"
-      })
-      loginForm.setError("password", {
-        type: "custom",
-        message: "invalid credentials",
-      });
-    }
-  };
-
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Logan Form</CardTitle>
+        <CardTitle>Login Form</CardTitle>
         <CardDescription>Welcome Back, please login first</CardDescription>
       </CardHeader>
       <CardContent>
